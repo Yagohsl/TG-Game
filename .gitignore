@@ -1,0 +1,4 @@
+#ignorar cache do python
+**/__pycache__/
+*.py[cod]
+*$py.class
