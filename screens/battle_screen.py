@@ -9,7 +9,7 @@ class BattleScreen:
         context = game_state
         self.fighter1 = context["player1"]
         self.fighter2 = context["player2"]
-        self.background = context["selected_map"]
+        self.background = pygame.image.load("assets/images/jogo/maps/background.png") #escolhendo só 1 mapa
         self.intro_count = 3
         self.last_count_update = pygame.time.get_ticks()
         self.score = [0, 0]
