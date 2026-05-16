@@ -1,7 +1,6 @@
 import pygame, sys
 from data.screen import SCREEN, VERSUS_IMAGE, VICTORY_IMAGE, draw_health_bar, SCREEN_WIDTH, SCREEN_HEIGHT, draw_power_bar
 from utils.draw import draw_text
-from data.available_characters import AVAILABLE_CHARACTERS
 from utils.fonts import get_font
 from data.colors import WHITE
 
@@ -10,7 +9,7 @@ class BattleScreen:
         context = game_state
         self.fighter1 = context["player1"]
         self.fighter2 = context["player2"]
-        self.background = pygame.image.load("assets/images/jogo/maps/background.png") #escolhendo mapa
+        self.background = pygame.image.load("assets/images/jogo/maps/background2.png") #escolhendo mapa
         self.intro_count = 3
         self.last_count_update = pygame.time.get_ticks()
         self.score = [0, 0]
@@ -30,7 +29,6 @@ class BattleScreen:
             #icones
             SCREEN.blit(self.fighter1.icon, (20, 5))
             SCREEN.blit(self.fighter2.icon, (890, 5))
-            SCREEN.blit(VERSUS_IMAGE, (410, 40))
 
             #status dos jogadores
             draw_health_bar(self.fighter1.health, 20, 100, 1)

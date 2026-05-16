@@ -1,9 +1,10 @@
 import pygame
-from data.available_characters import AVAILABLE_CHARACTERS  #Certifique-se de importar o dicionário AVAILABLE_CHARACTERS
+from data.available_characters import AVAILABLE_CHARACTERS 
 from screens.menu_screen import MenuScreen
 from screens.battle_screen import BattleScreen
 from bosses.boss import Boss
 from fighters.fighterPlayer import FighterPlayer
+from data.screen import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 def run_game():
@@ -26,7 +27,7 @@ def run_game():
             player_data["sheet_path"],
             player_data["icon"],
             player_data["data"],
-            1, 200, 310, False
+            1, 180, 430, False
         )
 
         #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
@@ -37,7 +38,7 @@ def run_game():
             boss_data["sheet_path"],
             boss_data["icon"],
             boss_data["data"],
-            2, 700, 310, True
+            2, 100, 430, True
         )
 
         #Tela de batalha
