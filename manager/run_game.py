@@ -38,7 +38,7 @@ def run_game():
             boss_data["sheet_path"],
             boss_data["icon"],
             boss_data["data"],
-            2, 100, 430, True
+            2, 1000, 430, True
         )
 
         #Tela de batalha

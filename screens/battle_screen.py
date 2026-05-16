@@ -1,5 +1,5 @@
 import pygame, sys
-from data.screen import SCREEN, VERSUS_IMAGE, VICTORY_IMAGE, draw_health_bar, SCREEN_WIDTH, SCREEN_HEIGHT, draw_power_bar
+from data.screen import SCREEN, VICTORY_IMAGE, draw_health_bar, SCREEN_WIDTH, SCREEN_HEIGHT, draw_power_bar
 from utils.draw import draw_text
 from utils.fonts import get_font
 from data.colors import WHITE
@@ -27,22 +27,22 @@ class BattleScreen:
             clock.tick(70)
 
             #icones
-            SCREEN.blit(self.fighter1.icon, (20, 5))
-            SCREEN.blit(self.fighter2.icon, (890, 5))
+            SCREEN.blit(self.fighter1.icon, (40, 5))
+            #SCREEN.blit(self.fighter2.icon, (890, 565))
 
             #status dos jogadores
-            draw_health_bar(self.fighter1.health, 20, 100, 1)
-            draw_health_bar(self.fighter2.health, 580, 100, 2)
+            draw_health_bar(self.fighter1.health, 40, 100, 1)
+            draw_health_bar(self.fighter2.health, 240, 660, 2)
 
             #status dos jogadores
-            draw_power_bar(self.fighter1.special_energy, 20, 120, 1)
-            draw_power_bar(self.fighter2.special_energy, 680, 120, 2)
+            draw_power_bar(self.fighter1.special_energy, 40, 120, 1)
+            #draw_power_bar(self.fighter2.special_energy, 680, 120, 2)
 
             #inserindo nomes
-            draw_text(self.fighter1.name, get_font(25), WHITE, 110, 50)
-            draw_text(self.fighter2.name, get_font(25), WHITE, 580, 50)
+            draw_text(self.fighter1.name, get_font(25), WHITE, 130, 50)
+            draw_text(self.fighter2.name, get_font(25), WHITE, 520, 620)
             draw_text("p1: " + str(self.score[0]), get_font(25), WHITE, 350, 130)
-            draw_text("p2: " + str(self.score[1]), get_font(25), WHITE, 580, 130)
+           #draw_text("p2: " + str(self.score[1]), get_font(25), WHITE, 580, 130)
 
             #recontagem
             if self.intro_count <= 0:
@@ -73,7 +73,7 @@ class BattleScreen:
                     self.round_over_time = pygame.time.get_ticks()
             else:
                 #exibir vitoria
-                SCREEN.blit(VICTORY_IMAGE, (360, 150))
+                SCREEN.blit(VICTORY_IMAGE, ((SCREEN_WIDTH - VICTORY_IMAGE.get_width())//2, 150))
 
                 #acaba jogo
                 if self.score[0] == 2 or self.score[1] == 2:
