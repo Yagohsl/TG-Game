@@ -1,10 +1,10 @@
 import pygame
-from data.available_characters import AVAILABLE_CHARACTERS  # Certifique-se de importar o dicionário AVAILABLE_CHARACTERS
+from data.available_characters import AVAILABLE_CHARACTERS  #Certifique-se de importar o dicionário AVAILABLE_CHARACTERS
 from screens.menu_screen import MenuScreen
-from screens.character_select import character_select
-from screens.map_select import map_select_screen
 from screens.battle_screen import BattleScreen
 from bosses.boss import Boss
+from fighters.fighterPlayer import FighterPlayer
+
 
 def run_game():
     game_state = {
@@ -19,7 +19,15 @@ def run_game():
         menu_screen.run()
 
         # 3. Vai para a seleção de personagens
-        character_select(game_state)
+        player_data = AVAILABLE_CHARACTERS["Anakin"]
+        game_state["player1"] = FighterPlayer(
+            player_data["name"],
+            player_data["animation_steps"],
+            player_data["sheet_path"],
+            player_data["icon"],
+            player_data["data"],
+            1, 200, 310, False
+        )
 
         # 4. Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
         boss_data = AVAILABLE_CHARACTERS["General"]
