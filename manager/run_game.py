@@ -14,11 +14,11 @@ def run_game():
     }
 
     while True:
-        # 1. Exibe o menu
+        #Exibe o menu
         menu_screen = MenuScreen()
         menu_screen.run()
 
-        # 3. Vai para a seleção de personagens
+        #Personagem Principal
         player_data = AVAILABLE_CHARACTERS["Anakin"]
         game_state["player1"] = FighterPlayer(
             player_data["name"],
@@ -29,7 +29,7 @@ def run_game():
             1, 200, 310, False
         )
 
-        # 4. Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
+        #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
         boss_data = AVAILABLE_CHARACTERS["General"]
         game_state["player2"] = Boss(
             boss_data["name"],
@@ -40,6 +40,6 @@ def run_game():
             2, 700, 310, True
         )
 
-        # 5. A tela de batalha
+        #Tela de batalha
         battle_screen = BattleScreen(game_state)
         battle_screen.run()
