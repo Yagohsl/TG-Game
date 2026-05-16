@@ -26,9 +26,8 @@ class BattleScreen:
 
             clock.tick(70)
 
-            #icones
+            #icone
             SCREEN.blit(self.fighter1.icon, (40, 5))
-            #SCREEN.blit(self.fighter2.icon, (890, 565))
 
             #status dos jogadores
             draw_health_bar(self.fighter1.health, 40, 100, 1)
@@ -42,8 +41,11 @@ class BattleScreen:
             draw_text(self.fighter1.name, get_font(25), WHITE, 130, 50)
             draw_text(self.fighter2.name, get_font(25), WHITE, 520, 620)
             draw_text("p1: " + str(self.score[0]), get_font(25), WHITE, 350, 130)
-           #draw_text("p2: " + str(self.score[1]), get_font(25), WHITE, 580, 130)
 
+            if hasattr(self.fighter2, 'draw_projectiles'):
+                self.fighter2.draw_projectiles(SCREEN)
+
+                
             #recontagem
             if self.intro_count <= 0:
                 self.fighter1.move(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN, self.fighter2, self.round_over)

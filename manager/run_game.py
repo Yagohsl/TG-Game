@@ -2,7 +2,7 @@ import pygame
 from data.available_characters import AVAILABLE_CHARACTERS 
 from screens.menu_screen import MenuScreen
 from screens.battle_screen import BattleScreen
-from bosses.boss import Boss
+from bosses.bossAnxiety import BossAnxiety
 from fighters.fighterPlayer import FighterPlayer
 from data.screen import SCREEN_HEIGHT, SCREEN_WIDTH
 
@@ -32,7 +32,7 @@ def run_game():
 
         #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
         boss_data = AVAILABLE_CHARACTERS["General"]
-        game_state["player2"] = Boss(
+        game_state["player2"] = BossAnxiety(
             boss_data["name"],
             boss_data["animation_steps"],
             boss_data["sheet_path"],

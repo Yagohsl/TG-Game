@@ -92,12 +92,15 @@ class Fighter():
         if key[pygame.K_y] and self.special_energy >= self.special_cost and not self.defending:
             self.special_attack(target)
 
+
         if key[pygame.K_a] and not self.defending:
           dx = -speed
           self.running = True
+          self.flip = True
         if key[pygame.K_d] and not self.defending:
           dx = speed
           self.running = True
+          self.flip = False
         #jump
         if (key[pygame.K_w] and not self.jump and not self.defending ):
           if self.running == True:
@@ -186,11 +189,7 @@ class Fighter():
       self.jump = False
       dy = screen_height - 110 - self.rect.bottom
 
-    #ensure players face each other
-    if target.rect.centerx > self.rect.centerx:
-      self.flip = False
-    else:
-      self.flip = True
+    
 
     #apply attack cooldown
     if self.attack_cooldown > 0:
