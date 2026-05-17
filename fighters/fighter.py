@@ -88,7 +88,7 @@ class Fighter():
     key = pygame.key.get_pressed()
 
     #can only perform other actions if not currently attacking
-    if self.attacking == False and self.alive == True and round_over == False:
+    if self.alive == True and round_over == False:
      
       #check player 1 controls
       if self.player == 1:
@@ -282,7 +282,7 @@ class Fighter():
         self.special_energy += 0.05
 
   def attack(self, target):
-    if self.attack_cooldown == 0:
+    if not self.attacking and self.attack_cooldown == 0:
       #execute attack
       self.attacking = True
       self.attack_sound.play()
