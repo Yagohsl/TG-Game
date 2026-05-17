@@ -27,6 +27,6 @@ AVAILABLE_CHARACTERS = {
         "animation_steps": [4, 4, 1, 1, 1, 1, 1, 1, 1, 1],
         "sheet_path": pygame.image.load(os.path.join(ASSETS_DIR, 'ansiedade.png')),
         "icon": pygame.image.load(os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters', 'icons', 'general_grevious_icon.png')),
-        "data": [64, 4, [72, 17]]
+        "data": [64, 4, [22, 19]]
     }
 }
