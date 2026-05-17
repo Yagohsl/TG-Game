@@ -27,11 +27,11 @@ def run_game():
             player_data["sheet_path"],
             player_data["icon"],
             player_data["data"],
-            1, 180, 430, False
+            1, 380, 430, False
         )
 
         #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
-        boss_data = AVAILABLE_CHARACTERS["General"]
+        boss_data = AVAILABLE_CHARACTERS["Anxiety"]
         game_state["player2"] = BossAnxiety(
             boss_data["name"],
             boss_data["animation_steps"],
