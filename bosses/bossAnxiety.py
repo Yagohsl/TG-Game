@@ -97,6 +97,7 @@ class BossAnxiety(Boss):
         self.attack_type = 0
         current_time = pygame.time.get_ticks()
 
+
         # Garante que os projéteis continuem voando de forma independente na arena
         self.update_projectiles(target)
 
@@ -104,22 +105,24 @@ class BossAnxiety(Boss):
         if self.attacking == False and self.alive == True and round_over == False:
             distancia_x = target.rect.centerx - self.rect.centerx
 
+            #Se encostar no player, da dano
+            if abs(distancia_x) < 85 and self.attack_cooldown == 0:
+                target.hit = True
+                target.health -= 10
+                self.attack_cooldown = 60
+
             # Sistema de decisão a cada 30 frames
             self.decision_timer += 1
             if self.decision_timer >= 30:
                 self.decision_timer = 0
 
-                # 1. Condição de Perigo
-                if self.health <= 15 and self.special_energy < self.special_cost:
-                    self.current_action = "retreat"
-
                 # 2. Quando estiver longe, escolhe entre avançar ou usar o Bombardeio ("thoughts")
-                elif abs(distancia_x) > 130:
+                if abs(distancia_x) > 130:
                     self.current_action = random.choice(["run", "thoughts"])
 
                 # 3. Combate de Curto Alcance
                 else:
-                    opcoes = ["attack1", "attack2", "defend"]
+                    opcoes = ["attack1", "attack2"]
                     if self.special_energy >= self.special_cost:
                         opcoes.append("special")
                     self.current_action = random.choice(opcoes)
