@@ -36,6 +36,11 @@ class Fighter():
     self.max_special_energy = 100
     self.special_cost = 30
     self.using_special = False
+    
+    # Atributos para o efeito de piscar
+    self.flash_timer = 0
+    self.flash_duration = 150  # Tempo que ele fica branco (150 milissegundos)
+    self.is_flashing = False
 
   def special_attack(self, target):
     if not self.attacking and self.attack_cooldown == 0:
@@ -207,7 +212,11 @@ class Fighter():
       self.alive = False
       self.update_action(6)#6:death
     elif self.hit == True:
-      self.update_action(5)#5:hit
+      # --- MODIFICAÇÃO: Ativa o cronômetro assim que o hit inicia ---
+      if self.action != 5:  # Garante que só ativa uma vez por golpe recebido
+        self.flash_timer = pygame.time.get_ticks()
+        self.is_flashing = True
+      self.hit = False #5:hit
 
     elif self.attacking == True:
       if self.attack_type == 1:
@@ -302,4 +311,17 @@ class Fighter():
 
   def draw(self, surface):
     img = pygame.transform.flip(self.image, self.flip, False)
+    # --- MODIFICAÇÃO: Aplica o efeito de piscar branco se estiver no tempo correto ---
+    agora = pygame.time.get_ticks()
+    if self.is_flashing and agora - self.flash_timer < self.flash_duration:
+      img_branca = img.copy()
+      surface_branca = pygame.Surface(img_branca.get_size())
+      surface_branca.fill((255, 255, 255))
+      # BLEND_RGB_ADD soma branco puro (255,255,255) mantendo a transparência do canal Alpha intacta!
+      img_branca.blit(surface_branca, (2, 2), special_flags=pygame.BLEND_RGB_ADD)
+      img = img_branca
+    else:
+      self.is_flashing = False # Desativa quando estoura o tempo
+      
+    # Desenha o personagem na tela (seja a versão normal ou a piscando)
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
