@@ -7,60 +7,63 @@ class BossAnxiety(Boss):
     def __init__(self, name, animation_steps, sprite_sheet, icon, data, player, x, y, flip):
         super().__init__(name, animation_steps, sprite_sheet, icon, data, player, x, y, flip)
        
-        # Controle do Bombardeio de Preocupações
+        # Controle exclusivo do Bombardeio de Preocupações
         self.projectiles = []
         self.projectile_cooldown = 0
-        self.shoot_interval = 3000 #Dispara um novo projétil a cada 200 milissegundos
+        self.shoot_interval = 200  # Corrigido para 200 milissegundos para criar um bombardeio real
+        self.animation_cooldown = 120
+
+        self.fired_this_cycle = False
+
+        self.animation_map = {
+            "idle": 0,
+            "run": 1,
+            "thoughts": 2,  
+      
+}
     
     def fire_preoccupation(self, target):
-        """Calcula a rota até o jogador e aplica desvios imprevisíveis."""
+        """Calcula a rota até o jogador e aplica desvios imprevisíveis (angulares e de velocidade)."""
         start_x = self.rect.centerx
         start_y = self.rect.centery
         
-        # 1. Descobre a distância horizontal e vertical até o centro do Herói
         dx = target.rect.centerx - start_x
         dy = target.rect.centery - start_y
         base_angle = math.atan2(dy, dx)
         
-        # 2. Torna a trajetória irregular: adiciona um desvio aleatório no ângulo original [cite: 1, 8]
-        # O valor entre -0.5 e 0.5 garante que o tiro saia um pouco torto, espalhando o bombardeio
+        # Trajetória irregular com desvio aleatório
         irregular_angle = base_angle + random.uniform(-0.5, 0.5)
         
-        # 3. Torna a velocidade imprevisível: alguns pensamentos são mais rápidos que outros [cite: 1, 8]
+        # Velocidades variadas simulando pensamentos acelerados
         speed = random.uniform(7, 12)
         
-        # Criamos o dicionário do projétil com comportamento próprio de onda
         projectile = {
             "x": start_x,
             "y": start_y,
             "vx": math.cos(irregular_angle) * speed,
             "vy": math.sin(irregular_angle) * speed,
-            "radius": random.randint(14, 17), # Projéteis pequenos [cite: 1, 12]
+            "radius": random.randint(14, 17),
             "spawn_time": pygame.time.get_ticks(),
-            "wave_speed": random.uniform(15, 25), # Frequência da oscilação
-            "wave_amplitude": random.uniform(2, 5) # Força do desvio vertical
+            "wave_speed": random.uniform(15, 25),
+            "wave_amplitude": random.uniform(2, 5)
         }
         
         self.projectiles.append(projectile)
 
     def update_projectiles(self, target):
-        """Gerencia a física ondulatória e o impacto com o Herói."""
+        """Gerencia a movimentação ondulatória dos projéteis e colisões com o Herói."""
         current_time = pygame.time.get_ticks()
         
-        # Percorre uma cópia da lista [:] para permitir a remoção segura de itens durante o loop 
         for proj in self.projectiles[:]:
-            # Calcula há quantos segundos o projétil existe
             time_alive = (current_time - proj["spawn_time"]) / 1000.0
             
-            # Efeito ondulatório: cria uma perturbação baseada no Seno do tempo ativo
-            # Isso faz o projétil "vibrar" ou serpentear pelo ar de forma instável
+            # Efeito senoidal para fazer o projétil serpentear de forma instável
             wave = math.sin(time_alive * proj["wave_speed"]) * proj["wave_amplitude"]
             
-            # Atualiza a posição X e Y
             proj["x"] += proj["vx"]
             proj["y"] += proj["vy"] + wave
             
-            # Cria um retângulo virtual (Rect) temporário para usar o sistema de colisões do Pygame 
+            # Hitbox virtual do projétil
             proj_rect = pygame.Rect(
                 proj["x"] - proj["radius"], 
                 proj["y"] - proj["radius"], 
@@ -68,85 +71,68 @@ class BossAnxiety(Boss):
                 proj["radius"] * 2
             )
             
-            # Verifica impacto com o Herói 
+            # Verificação de impacto
             if proj_rect.colliderect(target.rect):
                 if hasattr(target, 'health'):
-                    target.health -= 2 # Causa pouco dano por projétil, focando no cansaço mental [cite: 6, 8]
+                    target.health -= 2  # Dano baixo e focado em exaustão psicológica
                 self.projectiles.remove(proj)
                 continue
                 
-            # Limpa da memória caso saia dos limites de uma tela HD (1280x720) [cite: 8, 158]
+            # Limpeza preventiva de memória (Fora da tela HD 1280x720)
             if proj["x"] < -50 or proj["x"] > 1330 or proj["y"] < -50 or proj["y"] > 770:
                 self.projectiles.remove(proj)
 
     def draw_projectiles(self, surface):
-        """Desenha as esferas de pensamentos intrusivos na arena."""
+        """Desenha graficamente as esferas de pensamentos intrusivos na arena."""
         for proj in self.projectiles:
-            # Camada externa: Aura do pensamento negativo (Roxo/Violeta) 
+            # Aura externa roxo/violeta
             pygame.draw.circle(surface, (140, 20, 180), (int(proj["x"]), int(proj["y"])), proj["radius"] + 2)
-            # Camada interna: Núcleo brilhante de energia 
+            # Núcleo de energia interno brilhante
             pygame.draw.circle(surface, (240, 220, 255), (int(proj["x"]), int(proj["y"])), int(proj["radius"] / 2))
 
-    def move(self, screen_width, screen_height, surface, target, round_over):
-
-        speed = 6 
-        gravity = 2
+    def update_ai(self, target, round_over):
+        """Sobrescreve apenas as regras de decisão e ataques da Ansiedade."""
         dx = 0
-        dy = 0
-        self.running = False
-        self.attack_type = 0
         current_time = pygame.time.get_ticks()
 
-
-        # Garante que os projéteis continuem voando de forma independente na arena
-        self.update_projectiles(target)
-
-        # Condições de execução de movimentos (vivos e durante a partida)
-        if self.attacking == False and self.alive == True and round_over == False:
+        if not self.attacking and self.alive and not round_over:
             distancia_x = target.rect.centerx - self.rect.centerx
 
-            #Se encostar no player, da dano
+            # Dano por contato direto por aproximação excessiva
             if abs(distancia_x) < 85 and self.attack_cooldown == 0:
                 target.hit = True
-                target.health -= 10
+                if hasattr(target, 'health'):
+                    target.health -= 10
                 self.attack_cooldown = 60
 
-            # Sistema de decisão a cada 30 frames
+            # Cronômetro de tomada de decisão
             self.decision_timer += 1
-            if self.decision_timer >= 30:
+            if self.decision_timer >= self.decision_cooldown:
                 self.decision_timer = 0
 
-                # 2. Quando estiver longe, escolhe entre avançar ou usar o Bombardeio ("thoughts")
+                self.fired_this_cycle = False
+
+                # Longe: Persegue ou ativa Bombardeio de Preocupações ("thoughts")
                 if abs(distancia_x) > 130:
                     self.current_action = random.choice(["run", "thoughts"])
-
-                # 3. Combate de Curto Alcance
+                # Perto: Ataques tradicionais ou recuo tático de pânico ("retreat")
                 else:
                     opcoes = ["attack1", "attack2"]
-                    if self.special_energy >= self.special_cost:
-                        opcoes.append("special")
+                    if hasattr(self, 'special_energy') and hasattr(self, 'special_cost'):
+                        if self.special_energy >= self.special_cost:
+                            opcoes.append("special")
                     self.current_action = random.choice(opcoes)
 
-            # --- EXECUÇÃO DAS AÇÕES DA MÁQUINA DE ESTADOS ---
-
-            if self.current_action == "retreat":
+            # --- EXECUÇÃO DOS ESTADOS EXCLUSIVOS DA ANSIEDADE ---
+            if self.current_action == "run":
                 self.running = True
-                dx = -speed if distancia_x > 0 else speed
+                dx = self.speed if distancia_x > 0 else -self.speed
 
-            elif self.current_action == "run":
-                self.running = True
-                dx = speed if distancia_x > 0 else -speed
-
-            # EXECUÇÃO DO NOVO ATAQUE: Bombardeio de Preocupações
             elif self.current_action == "thoughts":
-                self.running = True
-                # O boss recua lentamente (metade da velocidade) enquanto atira para manter distância
-                dx = -(speed * 0.5) if distancia_x > 0 else (speed * 0.5)
-                
-                # Controla a cadência de tiro usando o relógio interno do Pygame
-                if current_time - self.projectile_cooldown > self.shoot_interval:
+                self.running = False
+                if not self.fired_this_cycle:
                     self.fire_preoccupation(target)
-                    self.projectile_cooldown = current_time
+                    self.fired_this_cycle = True
 
             elif self.current_action == "attack1":
                 self.attack_type = 1
@@ -162,29 +148,40 @@ class BossAnxiety(Boss):
                 self.special_attack(target)
                 self.current_action = "idle"
 
-        # --- REGRAS DE GRAVIDADE E LIMITES DE TELA ---
-        self.vel_y += gravity
-        dy += self.vel_y
+        # --- APLICADOR DINÂMICO DE ANIMAÇÃO ---
+        # Se a ação atual da IA está no nosso mapa visual, nós a aplicamos!
+        if self.current_action in self.animation_map and not self.attacking:
+            visual_id = self.animation_map[self.current_action]
+            self.update_action(visual_id)
 
-        if self.rect.left + dx < 0:
-            dx = -self.rect.left
-        if self.rect.right + dx > screen_width:
-            dx = screen_width - self.rect.right
-        if self.rect.bottom + dy > screen_height - 110:
-            self.vel_y = 0
-            self.jump = False
-            dy = screen_height - 110 - self.rect.bottom
+        return dx
+    
+    def update(self):
+        """Bloqueia e protege a animação customizada para impedir o reset automático do Fighter."""
+        # Se estiver vivo, não estiver tomando dano e nem atacando fisicamente corpo-a-corpo
+        if self.alive and not self.hit and not self.attacking:
+            if self.current_action == "thoughts":
+                self.update_action(2)  # Força e mantém o índice 2 da folha ativo
+                
+                # Avança o índice de frames manualmente respeitando o tempo
+                if pygame.time.get_ticks() - self.update_time > self.animation_cooldown:
+                    self.frame_index += 1
+                    self.update_time = pygame.time.get_ticks()
+                
+                # --- O PULO DO GATO: ACABOU A ANIMAÇÃO, VOLTA PRO IDLE ---
+                if self.frame_index >= len(self.animation_list[self.action]):
+                    self.frame_index = 0
+                    self.current_action = "idle"  # Força o estado a virar IDLE na hora!
+                    
+                self.image = self.animation_list[self.action][self.frame_index]
+                return  # RETORNA ANTECIPADAMENTE
 
-        # Alinha a direção do sprite para encarar o alvo
-        if target.rect.centerx > self.rect.centerx:
-            self.flip = False
-        else:
-            self.flip = True
+        # Se não estiver no estado especial, executa os comportamentos padrões herdados (idle, run, hit, death)
+        super().update()
 
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
-
-        # Atualização de posicionamento final
-        self.rect.x += dx
-        self.rect.y += dy
-     
+    def move(self, screen_width, screen_height, surface, target, round_over):
+        """Atualiza a física dos projéteis e aproveita toda a física base do Boss."""
+        self.update_projectiles(target)
+        # Delega gravidade, limites, inversão e movimentação final para a classe base
+        super().move(screen_width, screen_height, surface, target, round_over)
+        

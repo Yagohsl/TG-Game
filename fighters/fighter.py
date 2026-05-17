@@ -36,6 +36,8 @@ class Fighter():
     self.max_special_energy = 100
     self.special_cost = 30
     self.using_special = False
+
+    self.animation_cooldown = 60
     
     # Atributos para o efeito de piscar
     self.flash_timer = 0
@@ -249,7 +251,7 @@ class Fighter():
     self.image = self.animation_list[self.action][self.frame_index]
 
     #check if enough time has passed since the last update
-    if pygame.time.get_ticks() - self.update_time > animation_cooldown:
+    if pygame.time.get_ticks() - self.update_time > self.animation_cooldown:
       self.frame_index += 1
       self.update_time = pygame.time.get_ticks()
     #check if the animation has finished
