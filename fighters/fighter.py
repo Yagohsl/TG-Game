@@ -325,5 +325,6 @@ class Fighter():
     else:
       self.is_flashing = False # Desativa quando estoura o tempo
       
-    # Desenha o personagem na tela (seja a versão normal ou a piscando)
+    # Desenha o personagem na tela
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
+    #pygame.draw.rect(surface, (255, 0, 0), self.rect, 2) #Mostra hitbox
