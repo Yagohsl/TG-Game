@@ -27,6 +27,7 @@ class BossAnxiety(Boss):
             "idle": 0,
             "run": 1,
             "thoughts": 2,  
+            "thought_explosion": 2,
             "dash_prep": 3,
             "dash": 3
       
@@ -59,6 +60,29 @@ class BossAnxiety(Boss):
         }
         
         self.projectiles.append(projectile)
+
+    def fire_explosion(self):
+        start_x = self.rect.centerx
+        start_y = self.rect.centery
+
+        num_projectiles = 12
+        speed = 18
+
+        for i in range(num_projectiles):
+            angle = (2 * math.pi / num_projectiles) *i
+
+            projectile = {
+                "x": start_x,
+                "y": start_y,
+                "vx": math.cos(angle) * speed,
+                "vy": math.sin(angle) * speed,
+                "radius": random.randint(12, 15),
+                "spawn_time": pygame.time.get_ticks(),
+                "wave_speed": random.uniform(10, 18),
+                "wave_amplitude": random.uniform(2, 4)  # Mantém o efeito ondulatório caótico da ansiedade
+                }
+            self.projectiles.append(projectile)
+
 
     def update_projectiles(self, target):
         """Gerencia a movimentação ondulatória dos projéteis e colisões com o Herói."""
@@ -126,8 +150,7 @@ class BossAnxiety(Boss):
 
                     # Longe: Persegue ou ativa Bombardeio de Preocupações ("thoughts")
                     if abs(distancia_x) > 130:
-                        self.current_action = random.choice(["run","dash_prep","thoughts"])
-                    # Perto: Ataques tradicionais ou recuo tático de pânico ("retreat")
+                        self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion"])
                     else:
                         opcoes = ["attack1", "attack2"]
                         if hasattr(self, 'special_energy') and hasattr(self, 'special_cost'):
@@ -144,6 +167,12 @@ class BossAnxiety(Boss):
                 self.running = False
                 if not self.fired_this_cycle:
                     self.fire_preoccupation(target)
+                    self.fired_this_cycle = True
+
+            elif self.current_action == "thought_explosion":
+                self.running = False
+                if not self.fired_this_cycle:
+                    self.fire_explosion()
                     self.fired_this_cycle = True
 
             elif self.current_action == "dash_prep":
