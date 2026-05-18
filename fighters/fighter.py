@@ -96,33 +96,32 @@ class Fighter():
       if self.player == 1:
         #movement
         # Player 1 - golpe especial
-        if key[pygame.K_y] and self.special_energy >= self.special_cost and not self.defending:
+        if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
             self.special_attack(target)
 
 
-        if key[pygame.K_a] and not self.defending:
+        if (key[pygame.K_a] or key[pygame.K_LEFT])  and not self.defending:
           dx = -speed
           self.running = True
           self.flip = True
-        if key[pygame.K_d] and not self.defending:
+        if (key[pygame.K_d] or key[pygame.K_RIGHT]) and not self.defending:
           dx = speed
           self.running = True
           self.flip = False
         #jump
-        if (key[pygame.K_w] and not self.jump and not self.defending ):
-          if self.running == True:
-            self.vel_y = -35
-          else:
+        if key[pygame.K_SPACE] and not self.jump and not self.defending :
             self.vel_y = -30
+            self.jump = True
 
-          self.jump = True
+        if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
+          self.vel_y *= 0.5
         #attack
-        if (key[pygame.K_r] or key[pygame.K_t]) and not self.defending:
+        if (key[pygame.K_j] or key[pygame.K_k]) and not self.defending:
           self.attack(target)
           #determine which attack type was used
-          if key[pygame.K_r]:
+          if key[pygame.K_j]:
             self.attack_type = 1
-          if key[pygame.K_t]:
+          if key[pygame.K_k]:
             self.attack_type = 2
 
 
