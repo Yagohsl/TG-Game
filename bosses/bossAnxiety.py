@@ -118,6 +118,7 @@ class BossAnxiety(Boss):
             if proj_rect.colliderect(target.rect):
                 if hasattr(target, 'health'):
                     target.health -= 5  # Dano baixo e focado em exaustão psicológica
+                    target.hit = True
                 self.projectiles.remove(proj)
                 continue
                 

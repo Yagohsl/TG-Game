@@ -9,7 +9,7 @@ class BattleScreen:
         context = game_state
         self.fighter1 = context["player1"]
         self.fighter2 = context["player2"]
-        self.background = pygame.image.load("assets/images/jogo/maps/background2.png") #escolhendo mapa
+        self.background = pygame.image.load("assets/images/menu/FUNDO MENU.png") #escolhendo mapa
         self.intro_count = 3
         self.last_count_update = pygame.time.get_ticks()
         self.score = [0, 0]
@@ -39,8 +39,7 @@ class BattleScreen:
 
             #inserindo nomes
             draw_text(self.fighter1.name, get_font(25), WHITE, 130, 50)
-            draw_text(self.fighter2.name, get_font(25), WHITE, 520, 620)
-            draw_text("p1: " + str(self.score[0]), get_font(25), WHITE, 350, 130)
+            draw_text(self.fighter2.name, get_font(25), WHITE, SCREEN_WIDTH//2, 630, center = True)
 
             if hasattr(self.fighter2, 'draw_projectiles'):
                 self.fighter2.draw_projectiles(SCREEN)
@@ -78,11 +77,12 @@ class BattleScreen:
                 SCREEN.blit(VICTORY_IMAGE, ((SCREEN_WIDTH - VICTORY_IMAGE.get_width())//2, 150))
 
                 #acaba jogo
-                if self.score[0] == 2 or self.score[1] == 2:
+                if self.score[0] == 1:
                     if pygame.time.get_ticks() - self.round_over_time > self.round_over_cooldown:
                         self.round_over = True
                         self.round_over_time = pygame.time.get_ticks()
-                        SCREEN.blit(VICTORY_IMAGE, (360, 150))
+                        #exibir vitoria
+                        SCREEN.blit(VICTORY_IMAGE, ((SCREEN_WIDTH - VICTORY_IMAGE.get_width())//2, 150))  
                         return
 
                 if pygame.time.get_ticks() - self.round_over_time > self.round_over_cooldown:

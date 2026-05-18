@@ -15,7 +15,6 @@ AVAILABLE_CHARACTERS = {
                 "icon": pygame.image.load("assets/images/jogo/fighters/icons/mestre_diogo_icon.png"),
                 "data": [162, 3, [72, 40]]
             },
-    #Placeholder Boss1
     "General": {
         "name": "General Grievous",
         "animation_steps": [3, 8, 1, 8, 8, 3, 7, 5, 3, 8],
@@ -24,7 +23,7 @@ AVAILABLE_CHARACTERS = {
         "data": [162, 3, [72, 40]]
     },
     "Anxiety": {
-        "name": "Anxiety",
+        "name": "Ansiedade",
         "animation_steps": [4, 4, 3, 2, 1, 1, 1, 1, 1, 1],
         "sheet_path": pygame.image.load(os.path.join(ASSETS_DIR, 'ansiedade.png')),
         "icon": pygame.image.load(os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters', 'icons', 'general_grevious_icon.png')),
