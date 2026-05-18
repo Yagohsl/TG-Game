@@ -1,20 +1,23 @@
 import pygame, sys
 
 from buttons.button import Button
-from data.colors import WHITE
-from data.screen import SCREEN, SCREEN_WIDTH
+from data.colors import COR_HOVER, COR_TEXTO
+from data.screen import SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT
 from utils.draw import draw_text
 from utils.fonts import get_font
 
 def credit_screen():
-    background = pygame.image.load("assets/images/menu/FUNDO CREDITO.png")
-    exit_button = Button(image=pygame.image.load("assets/images/menu/sair.png"), pos=(SCREEN_WIDTH//2, 450))
+    background = pygame.image.load("assets/images/menu/FUNDO MENU.png")
+    exit_button = Button(text="SAIR", pos=(1280 // 2, 525),font=get_font(30), base_color=COR_TEXTO, hover_color=COR_HOVER)
     while True:
         mouse_pos = pygame.mouse.get_pos()
-        SCREEN.blit(background, (0, 0))
-        draw_text("joão vitor branco colombo", get_font(28), WHITE, 245, 55)
-        draw_text("gustavo neves buzois", get_font(28), WHITE, 245, 95)
-        exit_button.update(SCREEN)
+        SCALED_BACKGROUND = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        SCREEN.blit(SCALED_BACKGROUND, (0, 0))
+
+        draw_text("Yago Henrique dos Santos Lima", get_font(28), COR_TEXTO, SCREEN_WIDTH//2, 180, center=True)
+        draw_text("Amon Lucena", get_font(28), COR_TEXTO, SCREEN_WIDTH//2, 230, center=True)
+        exit_button.update_color(mouse_pos)
+        exit_button.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -23,6 +26,6 @@ def credit_screen():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if exit_button.checkForInput(mouse_pos):
+                    if exit_button.check_for_input(mouse_pos):
                         return
         pygame.display.update()
