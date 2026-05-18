@@ -23,11 +23,20 @@ class BossAnxiety(Boss):
         self.dash_hit = False
         self.dash_prep_timer = 0
 
+        self.teleport_count = 0
+        self.teleport_timer = 0
+        self.teleport_stage = "idle"  # "idle", "warning", "stay"
+        self.teleport_target_pos = (0, 0)
+        self.teleport_warning_duration = 700  # Tempo em ms que a faísca avisa antes dele surgir
+        self.teleport_stay_duration = 300     # Tempo em ms que ele fica parado antes do próximo salto
+        self.min_teleport_distance = 250      # Distância mínima em pixels para não repetir o lugar próximo
+
         self.animation_map = {
             "idle": 0,
             "run": 1,
             "thoughts": 2,  
             "thought_explosion": 2,
+            "teleport": 0, 
             "dash_prep": 3,
             "dash": 3
       
@@ -124,6 +133,21 @@ class BossAnxiety(Boss):
             # Aura interna preta
             pygame.draw.circle(surface, (0, 0, 0), (int(proj["x"]), int(proj["y"])), int(proj["radius"] / 2))
 
+        # Efeito visual de aviso (Faísca/Fumaça) no local de destino do teletransporte
+        if self.current_action == "teleport" and self.teleport_stage == "warning":
+            center_x = self.teleport_target_pos[0] + self.rect.width // 2
+            center_y = self.teleport_target_pos[1] + self.rect.height // 2
+            
+            # Gera 6 círculos caóticos gerando um efeito caótico de estática/fumaça da Ansiedade
+            for _ in range(6):
+                offset_x = random.randint(-25, 25)
+                offset_y = random.randint(-40, 40)
+                radius = random.randint(6, 14)
+                # Faísca externa laranja vibrante
+                pygame.draw.circle(surface, (255, 114, 13), (center_x + offset_x, center_y + offset_y), radius)
+                # Centro vazio preto simulando o "vazio" do glitch
+                pygame.draw.circle(surface, (0, 0, 0), (center_x + offset_x, center_y + offset_y), radius // 2)
+
     def update_ai(self, target, round_over):
         """Sobrescreve apenas as regras de decisão e ataques da Ansiedade."""
         dx = 0
@@ -140,7 +164,7 @@ class BossAnxiety(Boss):
                 self.attack_cooldown = 60
 
             # Cronômetro de tomada de decisão
-            if self.current_action not in ["dash","dash_prep"]:
+            if self.current_action not in ["dash","dash_prep", "teleport"]:
                 self.animation_cooldown = 120
                 self.decision_timer += 1
                 if self.decision_timer >= self.decision_cooldown:
@@ -150,7 +174,7 @@ class BossAnxiety(Boss):
 
                     # Longe: Persegue ou ativa Bombardeio de Preocupações ("thoughts")
                     if abs(distancia_x) > 130:
-                        self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion"])
+                        self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion", "teleport"])
                     else:
                         opcoes = ["attack1", "attack2"]
                         if hasattr(self, 'special_energy') and hasattr(self, 'special_cost'):
@@ -174,6 +198,58 @@ class BossAnxiety(Boss):
                 if not self.fired_this_cycle:
                     self.fire_explosion()
                     self.fired_this_cycle = True
+
+
+            elif self.current_action == "teleport":
+                self.running = False
+                self.gravity = 0
+                
+                # Passo 1: Inicializa o ciclo completo do ataque
+                if self.teleport_stage == "idle":
+                    self.teleport_count = 0
+                    self.teleport_stage = "warning"
+                    self.teleport_timer = current_time
+                    
+                    # Define o primeiro ponto aleatório respeitando as margens e a altura do chão (720 - 110)
+                    rand_x = random.randint(100, 1180)
+                    while abs(rand_x - self.rect.x) < self.min_teleport_distance:
+                        rand_x = random.randint(100, 1180)
+                    rand_y = random.randint(720 - 110 - self.rect.height- 150, 720 - 110 - self.rect.height)
+                    
+
+                    self.teleport_target_pos = (rand_x, rand_y)
+
+                # Passo 2: O aviso visual está ativo na tela
+                elif self.teleport_stage == "warning":
+                    if current_time - self.teleport_timer >= self.teleport_warning_duration:
+                        # Estourou os 500ms de aviso: muda o Boss para a posição imediatamente!
+                        self.rect.x = self.teleport_target_pos[0]
+                        self.rect.y = self.teleport_target_pos[1]
+                        self.teleport_count += 1
+
+                        # Checa se já realizou os 3 teletransportes
+                        if self.teleport_count >= 3:
+                            self.teleport_stage = "idle"
+                            self.current_action = "idle"
+                            self.gravity = 2
+                        else:
+                            # Entra em janela curta de permanência antes do próximo sumiço
+                            self.teleport_stage = "stay"
+                            self.teleport_timer = current_time
+
+                # Passo 3: Boss pousou e aguarda um instante antes de saltar novamente
+                elif self.teleport_stage == "stay":
+                    if current_time - self.teleport_timer >= self.teleport_stay_duration:
+                        # Sorteia um novo lugar e volta para o modo de aviso de fumaça
+                        self.teleport_stage = "warning"
+                        self.teleport_timer = current_time
+
+                        rand_x = random.randint(100, 1180)
+                        while abs(rand_x - self.rect.x) < self.min_teleport_distance:
+                            rand_x = random.randint(100, 1180)
+
+                        rand_y = random.randint(720 - 110 - self.rect.height- 150, 720 - 110 - self.rect.height)
+                        self.teleport_target_pos = (rand_x, rand_y)
 
             elif self.current_action == "dash_prep":
                 self.running = False  # Fica estático acumulando energia
@@ -253,7 +329,20 @@ class BossAnxiety(Boss):
                     self.current_action = "idle"  # Força o estado a virar IDLE na hora!
                     
                 self.image = self.animation_list[self.action][self.frame_index]
-                return  # RETORNA ANTECIPADAMENTE
+                return  
+            
+            elif self.current_action == "teleport":
+                # Mantém a pose de conjuração ativa e em looping enquanto salta caoticamente
+                self.update_action(2)
+                if pygame.time.get_ticks() - self.update_time > self.animation_cooldown:
+                    self.frame_index += 1
+                    self.update_time = pygame.time.get_ticks()
+                
+                if self.frame_index >= len(self.animation_list[self.action]):
+                    self.frame_index = 0  # Reseta o frame sem quebrar o estado principal do ataque
+                    
+                self.image = self.animation_list[self.action][self.frame_index]
+                return
             
             elif self.current_action == "dash_prep":
                 self.update_action(3)
