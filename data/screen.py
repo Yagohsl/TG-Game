@@ -6,8 +6,7 @@ SCREEN_HEIGHT =  720
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 FPS = 60
 
-VERSUS_IMAGE = pygame.image.load("assets/images/jogo/icons/versus.png").convert_alpha()
-VERSUS_IMAGE= pygame.transform.scale(VERSUS_IMAGE, (VERSUS_IMAGE.get_width() // 3, VERSUS_IMAGE.get_height() // 3))
+
 VICTORY_IMAGE = pygame.image.load("assets/images/jogo/icons/victory.png").convert_alpha()
 
 

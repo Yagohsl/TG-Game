@@ -20,7 +20,7 @@ def run_game():
         menu_screen.run()
 
         #Personagem Principal
-        player_data = AVAILABLE_CHARACTERS["Anakin"]
+        player_data = AVAILABLE_CHARACTERS["Mestre Diogo"]
         game_state["player1"] = FighterPlayer(
             player_data["name"],
             player_data["animation_steps"],
