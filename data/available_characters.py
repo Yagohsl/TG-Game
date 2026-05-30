@@ -10,8 +10,8 @@ AVAILABLE_CHARACTERS = {
     #Placeholder Personagem Principal
     "Mestre Diogo": {
                 "name": "Mestre Diogo Robles",
-                "animation_steps": [5, 12, 1, 8, 8, 3, 7, 5, 3, 8],
-                "sheet_path": pygame.image.load("assets/images/jogo/fighters/mestre_diogo.png"),
+                "animation_steps": [1, 12, 1, 8, 8, 3, 7, 5, 3, 8],
+                "sheet_path": pygame.image.load("assets/images/jogo/fighters/mestre_diogo2.png"),
                 "icon": pygame.image.load("assets/images/jogo/fighters/icons/mestre_diogo_icon.png"),
                 "data": [162, 3, [72, 40]]
             },
@@ -24,7 +24,7 @@ AVAILABLE_CHARACTERS = {
     },
     "Anxiety": {
         "name": "Ansiedade",
-        "animation_steps": [4, 4, 3, 2, 1, 1, 1, 1, 1, 1],
+        "animation_steps": [4, 4, 3, 2, 3, 1, 1, 1, 1, 1],
         "sheet_path": pygame.image.load(os.path.join(ASSETS_DIR, 'ansiedade.png')),
         "icon": pygame.image.load(os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters', 'icons', 'general_grevious_icon.png')),
         "data": [64, 4, [22, 19]]

@@ -38,7 +38,8 @@ class BossAnxiety(Boss):
             "thought_explosion": 2,
             "teleport": 0, 
             "dash_prep": 3,
-            "dash": 3
+            "dash": 3,
+            "death": 4
       
 }
     
@@ -150,8 +151,11 @@ class BossAnxiety(Boss):
                 pygame.draw.circle(surface, (0, 0, 0), (center_x + offset_x, center_y + offset_y), radius // 2)
 
     def update_ai(self, target, round_over):
-        """Sobrescreve apenas as regras de decisão e ataques da Ansiedade."""
         dx = 0
+
+        if not self.alive:
+            self.current_action = "death"
+            return dx
         current_time = pygame.time.get_ticks()
 
         if not self.attacking and self.alive and not round_over:
@@ -315,6 +319,18 @@ class BossAnxiety(Boss):
     
     def update(self):
         """Bloqueia e protege a animação customizada para impedir o reset automático do Fighter."""
+        if self.current_action == "death":
+            self.update_action(self.animation_map["death"])
+
+            if self.frame_index >= len(self.animation_list[self.action]) -1:
+                self.frame_index = len(self.animation_list[self.action]) -1
+            else:
+                if pygame.time.get_ticks() -self.update_time > self.animation_cooldown:
+                    self.frame_index += 1
+                    self.update_time = pygame.time.get_ticks()
+            self.image = self.animation_list[self.action][self.frame_index]
+            return
+
         # Se estiver vivo, não estiver tomando dano e nem atacando fisicamente corpo-a-corpo
         if self.alive and not self.hit and not self.attacking:
             if self.current_action == "thoughts":
