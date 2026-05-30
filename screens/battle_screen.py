@@ -52,7 +52,7 @@ class BattleScreen:
 
             #status dos jogadores
             draw_health_bar(self.fighter1.health, 40, 100, 1)
-            draw_health_bar(self.fighter2.health, 240, 660, 2)
+            draw_health_bar(self.fighter2.health, 240, 680, 2)
 
             #status dos jogadores
             draw_power_bar(self.fighter1.special_energy, 40, 120, 1)
@@ -60,7 +60,7 @@ class BattleScreen:
 
             #inserindo nomes
             draw_text(self.fighter1.name, get_font(25), WHITE, 130, 50)
-            draw_text(self.fighter2.name, get_font(25), WHITE, SCREEN_WIDTH//2, 630, center = True)
+            draw_text(self.fighter2.name, get_font(25), WHITE, SCREEN_WIDTH//2, 650, center = True)
 
             if hasattr(self.fighter2, 'draw_projectiles'):
                 self.fighter2.draw_projectiles(SCREEN)
