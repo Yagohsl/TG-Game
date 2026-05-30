@@ -37,7 +37,7 @@ class BossAnxiety(Boss):
             "thoughts": 2,  
             "thought_explosion": 5,
             "thought_explosion_prep": 5,
-            "teleport": 0, 
+            "teleport": 5, 
             "dash_prep": 3,
             "dash": 3,
             "death": 4
@@ -388,15 +388,8 @@ class BossAnxiety(Boss):
                 return  
             
             elif self.current_action == "teleport":
-                # Mantém a pose de conjuração ativa e em looping enquanto salta caoticamente
-                self.update_action(2)
-                if pygame.time.get_ticks() - self.update_time > self.animation_cooldown:
-                    self.frame_index += 1
-                    self.update_time = pygame.time.get_ticks()
-                
-                if self.frame_index >= len(self.animation_list[self.action]):
-                    self.frame_index = 0  # Reseta o frame sem quebrar o estado principal do ataque
-                    
+                self.update_action(5)
+                self.frame_index = 1
                 self.image = self.animation_list[self.action][self.frame_index]
                 return
             
