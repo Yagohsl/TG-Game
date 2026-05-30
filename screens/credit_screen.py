@@ -16,22 +16,22 @@ def credit_screen():
 
         draw_text("Autores", get_font(32), COR_TEXTO, SCREEN_WIDTH//2, 50, center=True)
 
-        draw_text("Yago Henrique dos Santos Lima", get_font(28), COR_TEXTO, SCREEN_WIDTH//2, 150, center=True)
-        draw_text("Amon Lucena", get_font(28), COR_TEXTO, SCREEN_WIDTH//2, 200, center=True)
+        draw_text("Yago Henrique dos Santos Lima", get_font(25), COR_TEXTO, SCREEN_WIDTH//2, 150, center=True)
+        draw_text("Amon Lucena", get_font(25), COR_TEXTO, SCREEN_WIDTH//2, 200, center=True)
         
         draw_text("Controles", get_font(32), COR_TEXTO, SCREEN_WIDTH//2, 290, center=True)
 
-        draw_text("Movimentos:", get_font(28), COR_TEXTO, 100, 340) 
-        draw_text("A     D", get_font(28), COR_TEXTO, 450, 340)
+        draw_text("Movimentos:", get_font(25), COR_TEXTO, 100, 340) 
+        draw_text("A     D", get_font(25), COR_TEXTO, 420, 340)
 
-        draw_text("Pular:", get_font(28), COR_TEXTO, 100, 390)
-        draw_text("Espaço", get_font(28), COR_TEXTO, 450, 390)
+        draw_text("Pular:", get_font(25), COR_TEXTO, 100, 390)
+        draw_text("Espaço", get_font(25), COR_TEXTO, 420, 390)
 
-        draw_text("Ataques:", get_font(28), COR_TEXTO, 700, 340)
-        draw_text("J     K", get_font(28), COR_TEXTO, 1050, 340)
+        draw_text("Ataques:", get_font(25), COR_TEXTO, 700, 340)
+        draw_text("J     K", get_font(25), COR_TEXTO, 1020, 340)
 
-        draw_text("Esquiva:", get_font(28), COR_TEXTO, 700, 390)
-        draw_text("L", get_font(28), COR_TEXTO, 1050, 390)
+        draw_text("Esquiva:", get_font(25), COR_TEXTO, 700, 390)
+        draw_text("L", get_font(25), COR_TEXTO, 1020, 390)
 
 
 
