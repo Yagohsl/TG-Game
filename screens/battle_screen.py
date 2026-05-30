@@ -24,7 +24,7 @@ class BattleScreen:
         self.pause_screen = PauseScreen()
 
 
-        self.font_dialogo = get_font(28) 
+        self.font_dialogo = get_font(15) 
         self.dialogue_box = DialogueBox(SCREEN, self.font_dialogo)
 
         self.player_icon = game_state["player1"].icon

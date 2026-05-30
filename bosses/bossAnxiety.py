@@ -35,13 +35,14 @@ class BossAnxiety(Boss):
             "idle": 0,
             "run": 1,
             "thoughts": 2,  
-            "thought_explosion": 2,
+            "thought_explosion": 5,
+            "thought_explosion_prep": 5,
             "teleport": 0, 
             "dash_prep": 3,
             "dash": 3,
             "death": 4
-      
 }
+        self.explosion_prep_timer = 0
     
     def fire_preoccupation(self, target):
         """Calcula a rota até o jogador e aplica desvios imprevisíveis (angulares e de velocidade)."""
@@ -176,7 +177,7 @@ class BossAnxiety(Boss):
                     self.attack_cooldown = 60
 
             # Cronômetro de tomada de decisão
-            if self.current_action not in ["dash","dash_prep", "teleport"]:
+            if self.current_action not in ["dash","dash_prep", "teleport", "thought_explosion_prep", "thought_explosion"]:
                 self.animation_cooldown = 120
                 self.decision_timer += 1
                 if self.decision_timer >= self.decision_cooldown:
@@ -185,7 +186,7 @@ class BossAnxiety(Boss):
                     self.fired_this_cycle = False
 
                     #IA escolhe aleatoriamente qual ação irá fazer
-                    self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion", "teleport", "run"])
+                    self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion_prep", "teleport", "run"])
                  
 
             # --- EXECUÇÃO DOS ESTADOS EXCLUSIVOS DA ANSIEDADE ---
@@ -199,11 +200,30 @@ class BossAnxiety(Boss):
                     self.fire_preoccupation(target)
                     self.fired_this_cycle = True
 
+            # === ETAPA 1: PREPARO DA EXPLOSÃO (FRAME 0) ===
+            elif self.current_action == "thought_explosion_prep":
+                self.running = False
+                
+                # Inicializa um temporizador para o preparo se ele não existir (crie self.explosion_prep_timer no __init__ se necessário)
+                if not hasattr(self, 'explosion_prep_timer') or self.explosion_prep_timer == 0:
+                    self.explosion_prep_timer = current_time
+
+                # Aguarda 500ms carregando o golpe no Frame 0
+                if current_time - self.explosion_prep_timer >= 500:
+                    self.explosion_prep_timer = current_time # Reaproveita o timer para a pose do disparo
+                    self.current_action = "thought_explosion" # Transiciona para o ataque real
+
+            # === ETAPA 2: REALIZAÇÃO DA EXPLOSÃO (FRAME 1) ===
             elif self.current_action == "thought_explosion":
                 self.running = False
                 if not self.fired_this_cycle:
-                    self.fire_explosion()
+                    self.fire_explosion() # Dispara os projéteis 360
                     self.fired_this_cycle = True
+
+                # Mantém o Boss travado na pose de disparo por mais 400ms antes de voltar ao "idle"
+                if current_time - self.explosion_prep_timer >= 400:
+                    self.explosion_prep_timer = 0 # Reseta o timer
+                    self.current_action = "idle" # Libera o Boss
 
 
             elif self.current_action == "teleport":
@@ -337,6 +357,21 @@ class BossAnxiety(Boss):
 
         # Se estiver vivo, não estiver tomando dano e nem atacando fisicamente corpo-a-corpo
         if self.alive and not self.hit and not self.attacking:
+
+            # CONTROLADOR DO PREPARO DA EXPLOSÃO (Trava estritamente no frame 0)
+            if self.current_action == "thought_explosion_prep":
+                self.update_action(5) 
+                self.frame_index = 0  #frame preparo
+                self.image = self.animation_list[self.action][self.frame_index]
+                return
+
+            # CONTROLADOR DO ATAQUE REAL DA EXPLOSÃO (Trava estritamente no frame 1)
+            elif self.current_action == "thought_explosion":
+                self.update_action(5)
+                self.frame_index = 1  #frame realização
+                self.image = self.animation_list[self.action][self.frame_index]
+                return
+            
             if self.current_action == "thoughts":
                 self.update_action(2)  # Força e mantém o índice 2 da folha ativo
                 

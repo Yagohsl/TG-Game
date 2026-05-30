@@ -77,4 +77,4 @@ class DialogueBox:
             
         # Pequeno indicador piscante/aviso no canto inferior direito para "Avançar"
         adv_text = self.font.render("[ESPAÇO]", True, (255, 165, 0)) # Laranja (cor de alerta)
-        self.screen.blit(adv_text, (self.rect.right - 110, self.rect.bottom - 35))
+        self.screen.blit(adv_text, (self.rect.right - 130, self.rect.bottom - 35))
