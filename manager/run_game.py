@@ -27,7 +27,7 @@ def run_game():
             player_data["sheet_path"],
             player_data["icon"],
             player_data["data"],
-            1, 380, 430, False
+            1, 380, 450, False
         )
 
         #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)
