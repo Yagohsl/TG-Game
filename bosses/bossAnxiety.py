@@ -117,6 +117,9 @@ class BossAnxiety(Boss):
             
             # Verificação de impacto
             if proj_rect.colliderect(target.rect):
+                if hasattr(target, 'dashing') and target.dashing:
+                    continue  # Passa direto sem causar dano ou sumir com o projétil
+
                 if hasattr(target, 'health'):
                     target.health -= 5  # Dano baixo e focado em exaustão psicológica
                     target.hit = True
@@ -164,9 +167,13 @@ class BossAnxiety(Boss):
             # Dano por contato direto por aproximação excessiva
             if self.rect.colliderect(target.rect) and self.attack_cooldown == 0 and self.current_action != "dash":
                 target.hit = True
-                if hasattr(target, 'health'):
-                    target.health -= 10
-                self.attack_cooldown = 60
+                if hasattr(target, 'dashing') and target.dashing:
+                    pass 
+                else:
+                    target.hit = True
+                    if hasattr(target, 'health'):
+                        target.health -= 10
+                    self.attack_cooldown = 60
 
             # Cronômetro de tomada de decisão
             if self.current_action not in ["dash","dash_prep", "teleport"]:
@@ -278,10 +285,13 @@ class BossAnxiety(Boss):
 
                 # Detecção de dano por atropelamento
                 if self.rect.colliderect(target.rect) and not self.dash_hit:
-                    target.hit = True
-                    if hasattr(target, 'health'):
-                        target.health -= 15  
-                    self.dash_hit = True  
+                    if hasattr(target, 'dashing') and target.dashing:
+                        pass 
+                    else:
+                        target.hit = True
+                        if hasattr(target, 'health'):
+                            target.health -= 15  
+                        self.dash_hit = True
 
                 # Condição de término do movimento
                 if self.dash_distance_left <= 0:

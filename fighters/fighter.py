@@ -37,6 +37,14 @@ class Fighter():
     self.special_cost = 30
     self.using_special = False
 
+    self.dashing = False
+    self.dash_timer = 0
+    self.dash_duration = 200  # Duração do deslize em milissegundos
+    self.dash_cooldown = 800  # Tempo de espera para usar novamente
+    self.last_dash_time = 0
+    self.dash_speed = 35      # Velocidade explosiva do avanço
+    self.dash_dir = 1
+
     self.animation_cooldown = 60
     
     # Atributos para o efeito de piscar
@@ -85,6 +93,8 @@ class Fighter():
     dy = 0
     self.running = False
     self.attack_type = 0
+    now = pygame.time.get_ticks()
+
 
     #get keypresses
     key = pygame.key.get_pressed()
@@ -95,28 +105,44 @@ class Fighter():
       #check player 1 controls
       if self.player == 1:
         #movement
-        # Player 1 - golpe especial
+        #golpe especial
         if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
             self.special_attack(target)
+        #dash
+        if key[pygame.K_l] and not self.dashing and not self.attacking and not self.hit:
+          if now - self.last_dash_time >= self.dash_cooldown:
+            self.dashing = True
+            self.dash_timer = now
+            self.last_dash_time = now
+            # Define a direção do dash com base para onde o personagem está olhando
+            self.dash_dir = -1 if self.flip else 1
 
+        # --- PROCESSAMENTO DO DESLOCAMENTO DO DASH ---
+        if self.dashing:
+            if now - self.dash_timer < self.dash_duration:
+                # Aplica a velocidade explosiva na direção correta
+                dx = self.dash_speed * self.dash_dir
+                self.vel_y = 0 # Cancela a gravidade durante o dash
+            else:
+                self.dashing = False
+        else:
+          if (key[pygame.K_a] or key[pygame.K_LEFT])  and not self.defending:
+            dx = -speed
+            self.running = True
+            self.flip = True
+          if (key[pygame.K_d] or key[pygame.K_RIGHT]) and not self.defending:
+            dx = speed
+            self.running = True
+            self.flip = False
+          #jump
+          if key[pygame.K_SPACE] and not self.jump and not self.defending :
+              self.vel_y = -30
+              self.jump = True
 
-        if (key[pygame.K_a] or key[pygame.K_LEFT])  and not self.defending:
-          dx = -speed
-          self.running = True
-          self.flip = True
-        if (key[pygame.K_d] or key[pygame.K_RIGHT]) and not self.defending:
-          dx = speed
-          self.running = True
-          self.flip = False
-        #jump
-        if key[pygame.K_SPACE] and not self.jump and not self.defending :
-            self.vel_y = -30
-            self.jump = True
-
-        if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
-          self.vel_y *= 0.5
+          if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
+            self.vel_y *= 0.5
         #attack
-        if (key[pygame.K_j] or key[pygame.K_k]) and not self.defending:
+        if (key[pygame.K_j] or key[pygame.K_k]) and not self.defending and not self.dashing:
           self.attack(target)
           #determine which attack type was used
           if key[pygame.K_j]:
@@ -180,10 +206,12 @@ class Fighter():
         elif (key[pygame.K_0] or key[pygame.K_KP2]) and not self.defending:
           self.attack(target)
           self.attack_type = 2    
-
-    #apply gravity
-    self.vel_y += gravity
-    dy += self.vel_y
+    if not self.dashing:
+      #apply gravity
+      self.vel_y += gravity
+      dy += self.vel_y
+    else:
+      self.vel_y = 0
 
     #ensure player stays on screen
     if self.rect.left + dx < 0:
@@ -218,6 +246,10 @@ class Fighter():
         self.flash_timer = pygame.time.get_ticks()
         self.is_flashing = True
       self.hit = False #5:hit
+    #dash animacao
+    elif self.dashing:
+      self.update_action(0)
+      self.fram_index = 0
 
     elif self.attacking == True:
       if self.attack_type == 1:
@@ -289,7 +321,9 @@ class Fighter():
       self.attack_sound.play()
       attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, 2 * self.rect.width, self.rect.height)
       if attacking_rect.colliderect(target.rect):
-        if target.defending:
+        if target.dashing:
+          pass
+        elif target.defending:
           target.defense_hits_taken += 1
           if target.defense_hits_taken >= target.defense_break_threshold:
             target.defending = False

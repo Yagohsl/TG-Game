@@ -11,7 +11,7 @@ AVAILABLE_CHARACTERS = {
     "Mestre Diogo": {
                 "name": "Mestre Diogo Robles",
                 "animation_steps": [1, 12, 1, 8, 8, 3, 7, 5, 3, 8],
-                "sheet_path": pygame.image.load("assets/images/jogo/fighters/mestre_diogo2.png"),
+                "sheet_path": pygame.image.load("assets/images/jogo/fighters/mestre_diogo.png"),
                 "icon": pygame.image.load("assets/images/jogo/fighters/icons/mestre_diogo_icon.png"),
                 "data": [162, 3, [72, 40]]
             },
