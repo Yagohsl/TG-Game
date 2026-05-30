@@ -20,7 +20,7 @@ class MenuScreen:
             font=self.menu_font, base_color=COR_TEXTO, hover_color=COR_HOVER
         )
         self.credits_button = Button(
-            text="CRÉDITOS", pos=(SCREEN_WIDTH // 2, 425), 
+            text="SOBRE", pos=(SCREEN_WIDTH // 2, 425), 
             font=self.menu_font, base_color=COR_TEXTO, hover_color=COR_HOVER
         )
         self.exit_button = Button(
