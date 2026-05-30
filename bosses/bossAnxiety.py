@@ -177,15 +177,9 @@ class BossAnxiety(Boss):
 
                     self.fired_this_cycle = False
 
-                    # Longe: Persegue ou ativa Bombardeio de Preocupações ("thoughts")
-                    if abs(distancia_x) > 130:
-                        self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion", "teleport"])
-                    else:
-                        opcoes = ["attack1", "attack2"]
-                        if hasattr(self, 'special_energy') and hasattr(self, 'special_cost'):
-                            if self.special_energy >= self.special_cost:
-                                opcoes.append("special")
-                        self.current_action = random.choice(opcoes)
+                    #IA escolhe aleatoriamente qual ação irá fazer
+                    self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion", "teleport", "run"])
+                 
 
             # --- EXECUÇÃO DOS ESTADOS EXCLUSIVOS DA ANSIEDADE ---
             if self.current_action == "run":
