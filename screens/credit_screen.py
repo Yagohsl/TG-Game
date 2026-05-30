@@ -22,13 +22,13 @@ def credit_screen():
         draw_text("Controles", get_font(32), COR_TEXTO, SCREEN_WIDTH//2, 290, center=True)
 
         draw_text("Movimentos:", get_font(25), COR_TEXTO, 100, 340) 
-        draw_text("A     D", get_font(25), COR_TEXTO, 420, 340)
+        draw_text("A   D", get_font(25), COR_TEXTO, 420, 340)
 
         draw_text("Pular:", get_font(25), COR_TEXTO, 100, 390)
         draw_text("Espaço", get_font(25), COR_TEXTO, 420, 390)
 
         draw_text("Ataques:", get_font(25), COR_TEXTO, 700, 340)
-        draw_text("J     K", get_font(25), COR_TEXTO, 1020, 340)
+        draw_text("J   K", get_font(25), COR_TEXTO, 1020, 340)
 
         draw_text("Esquiva:", get_font(25), COR_TEXTO, 700, 390)
         draw_text("L", get_font(25), COR_TEXTO, 1020, 390)
