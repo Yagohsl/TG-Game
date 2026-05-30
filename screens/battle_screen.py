@@ -3,13 +3,14 @@ from data.screen import SCREEN, VICTORY_IMAGE, draw_health_bar, SCREEN_WIDTH, SC
 from utils.draw import draw_text
 from utils.fonts import get_font
 from data.colors import WHITE
+from screens.dialog_screen import DialogueBox
 
 class BattleScreen:
     def __init__(self, game_state):
         context = game_state
         self.fighter1 = context["player1"]
         self.fighter2 = context["player2"]
-        self.background = pygame.image.load("assets/images/jogo/maps/background4.png") #escolhendo mapa
+        self.background = pygame.image.load("assets/images/jogo/maps/background6.png") #escolhendo mapa
         self.intro_count = 3
         self.last_count_update = pygame.time.get_ticks()
         self.score = [0, 0]
@@ -18,11 +19,31 @@ class BattleScreen:
         pygame.mixer.music.load("assets/audio/music.mp3")
         pygame.mixer.music.play(-1)
         
+        
+
+
+        self.font_dialogo = get_font(28) 
+        self.dialogue_box = DialogueBox(SCREEN, self.font_dialogo)
+
+        self.player_icon = game_state["player1"].icon
+        self.boss_icon = game_state["player2"].icon
+
+        # Configurar a lista de falas da introdução da batalha
+        self.dialogos_da_luta = [
+            (self.player_icon, "Eu consigo fazer isso... Só preciso manter o foco e respirar fundo."),
+            (self.boss_icon, "E se tudo der errado? Você não se preparou o suficiente. Desista!"),
+            (self.player_icon, "Não vou me render aos pensamentos intrusivos. Vamos resolver isso agora!")
+        ]
+        self.dialogue_box.start_dialogue(self.dialogos_da_luta)
+        
     def run(self):
         SCALED_BACKGROUND = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         clock = pygame.time.Clock()
+        sombra = pygame.Surface(SCALED_BACKGROUND.get_size(), pygame.SRCALPHA)
+        sombra.fill((0,0,0,150))
         while True:
             SCREEN.blit(SCALED_BACKGROUND, (0, 0))
+            SCREEN.blit(sombra, (0,-100))
 
             clock.tick(70)
 
@@ -46,21 +67,25 @@ class BattleScreen:
 
                 
             #recontagem
-            if self.intro_count <= 0:
-                self.fighter1.move(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN, self.fighter2, self.round_over)
-                self.fighter2.move(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN, self.fighter1, self.round_over)
-            else:
-                #temporizador de contagem
-                draw_text(str(self.intro_count), get_font(40), WHITE, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
-                if (pygame.time.get_ticks() - self.last_count_update) >= 1000:
-                    self.intro_count -= 1
-                    self.last_count_update = pygame.time.get_ticks()
+            if not self.dialogue_box.active:
+                if self.intro_count <= 0:
+                    self.fighter1.move(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN, self.fighter2, self.round_over)
+                    self.fighter2.move(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN, self.fighter1, self.round_over)
+                else:
+                    #temporizador de contagem
+                    draw_text(str(self.intro_count), get_font(40), WHITE, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
+                    if (pygame.time.get_ticks() - self.last_count_update) >= 1000:
+                        self.intro_count -= 1
+                        self.last_count_update = pygame.time.get_ticks()
 
             # Atualiza lógica dos personagens aqui (a implementar)
             self.fighter1.update()
             self.fighter2.update()
             self.fighter1.draw(SCREEN)
             self.fighter2.draw(SCREEN)
+                  # 4. Desenha o balão de diálogo POR CIMA de tudo (se ele estiver ativo)
+            if self.dialogue_box.active:
+                self.dialogue_box.draw()
 
             #verificando derrota
             if self.round_over == False:
@@ -96,6 +121,9 @@ class BattleScreen:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
+                    if self.dialogue_box.active:
+                        if event.key == pygame.K_SPACE:  # Se apertar Espaço, avança o texto
+                            self.dialogue_box.next_dialogue()
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.pause()
                         return
