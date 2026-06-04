@@ -20,14 +20,14 @@ def run_game():
         menu_screen.run()
 
         #Personagem Principal
-        player_data = AVAILABLE_CHARACTERS["Mestre Diogo"]
+        player_data = AVAILABLE_CHARACTERS["Hero"]
         game_state["player1"] = FighterPlayer(
             player_data["name"],
             player_data["animation_steps"],
             player_data["sheet_path"],
             player_data["icon"],
             player_data["data"],
-            1, 380, 450, False
+            1, 380, 470, False
         )
 
         #Forçar o Player 2 a ser o Boss (Exemplo usando o General como Boss)

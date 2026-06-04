@@ -52,6 +52,11 @@ class Fighter():
     self.flash_duration = 150  # Tempo que ele fica branco (150 milissegundos)
     self.is_flashing = False
 
+    #hitbox do jogador
+    if self.player == 1:
+      self.rect = pygame.Rect((x, y, 60, 160))
+
+
   def special_attack(self, target):
     if not self.attacking and self.attack_cooldown == 0:
       self.attacking = True
@@ -249,7 +254,7 @@ class Fighter():
     #dash animacao
     elif self.dashing:
       self.update_action(0)
-      self.fram_index = 0
+      self.frame_index = 0
 
     elif self.attacking == True:
       if self.attack_type == 1:
@@ -260,12 +265,17 @@ class Fighter():
       elif self.attack_type == 3:
         self.update_action(9) #special attack
         
-    elif self.jump == True and self.running == False:
-      self.update_action(2)#2:jump
+    elif self.jump == True:
+      if self.vel_y <0:
+        self.update_action(2)#2:jump
+        self.frame_index = 0
+      else:
+        self.update_action(2)
+        self.frame_index = 1
+
     elif self.running == True and self.jump == False:
       self.update_action(1)#1:run
-    elif self.running == True and self.jump == True:
-      self.update_action(7) # mortal
+
     elif self.defending == True:
       self.update_action(8) # defesa
     elif self.defense_broken:
@@ -275,7 +285,7 @@ class Fighter():
     animation_cooldown = 70
 
     #velocidade de cada animação
-    animation_speeds = [100, 70, 70, 50, 50, 70,160, 150, 50, 50]
+    animation_speeds = [100, 200, 70, 50, 50, 70,160, 150, 50, 50]
     animation_cooldown = animation_speeds[self.action]
 
     #update image
@@ -310,9 +320,19 @@ class Fighter():
     if self.action == 5:
       self.defense_broken = False  #limpa estado de defesa quebrada
       
-    # regeneração lenta da barra de especial
+    #regeneração lenta da barra de especial
     if self.special_energy < self.max_special_energy:
         self.special_energy += 0.05
+
+    #hitbox diminua quando pula
+    if self.player == 1:
+      pe_salvo = self.rect.bottom
+      if self.jump:
+        self.rect.height = 140
+      else:
+        self.rect.height = 160
+      self.rect.bottom = pe_salvo
+
 
   def attack(self, target):
     if not self.attacking and self.attack_cooldown == 0:

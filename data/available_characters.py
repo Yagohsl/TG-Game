@@ -20,7 +20,7 @@ AVAILABLE_CHARACTERS = {
         "animation_steps": [1, 5, 2, 1, 1, 1, 1, 1, 1, 1],
         "sheet_path": pygame.image.load(os.path.join(ASSETS_DIR, 'hero.png')),
         "icon": pygame.image.load(os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters', 'icons', 'mestre_diogo_icon.png')),
-        "data": [64, 3, [22, 13]]
+        "data": [64, 3, [22, 8]]
     },
     "Anxiety": {
         "name": "Ansiedade",
