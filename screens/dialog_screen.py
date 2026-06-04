@@ -55,10 +55,7 @@ class DialogueBox:
         icon_x = self.rect.x + 20
         icon_y = self.rect.y + 15
         
-        # Redimensiona o ícone se ele for maior que o espaço disponível (ex: 128x128)
-        if speaker_icon.get_height() > (self.rect.height - 30):
-            speaker_icon = pygame.transform.scale(speaker_icon, (130, 130))
-            
+        
         self.screen.blit(speaker_icon, (icon_x, icon_y))
 
         # 3. Renderizar o texto com quebra de linha à direita da imagem
