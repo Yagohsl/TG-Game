@@ -5,12 +5,15 @@ from data.colors import COR_HOVER, COR_TEXTO
 from utils.fonts import get_font
 from screens.credit_screen import credit_screen
 from data.screen import SCREEN_HEIGHT, SCREEN_WIDTH
+from utils.draw import draw_text
 
 class MenuScreen:
     def __init__(self):
         self.menu_font = get_font(30)
         background = pygame.image.load("assets/images/menu/FUNDO MENU.png")
         self.background = pygame.transform.smoothscale(background, (1280,720))
+        titulo = pygame.image.load("assets/images/menu/TITULO MENU.png")
+        self.titulo = pygame.transform.scale(titulo, (495,90))
         #pygame.mixer.music.load("assets/audio/musicmenu.mp3")
         #pygame.mixer.music.play(-1)
 
@@ -35,7 +38,9 @@ class MenuScreen:
 
         while True:
             SCREEN.blit(SCALED_BACKGROUND, (0, 0))
+            SCREEN.blit(self.titulo, ((SCREEN_WIDTH - 495)//2,130))
             mouse_pos = pygame.mouse.get_pos()
+
 
             for button in [self.play_button, self.credits_button, self.exit_button]:
                 button.update_color(mouse_pos)
