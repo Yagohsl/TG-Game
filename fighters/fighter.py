@@ -8,7 +8,7 @@ class Fighter():
     self.offset = data[2]
     self.flip = flip
     self.animation_list = self.load_images(sprite_sheet, animation_steps)
-    self.action = 0 #0:idle #1:run #2:jump #3:attack1 #4:attack2 #5:hit #6:death #7:mortal #8:defense
+    self.action = 0 #0:idle #1:run #2:jump #3:dash #4:death #5:attack 
     self.frame_index = 0
     self.image = self.animation_list[self.action][self.frame_index]
     self.update_time = pygame.time.get_ticks()
@@ -244,24 +244,24 @@ class Fighter():
     if self.health <= 0:
       self.health = 0
       self.alive = False
-      self.update_action(6)#6:death
+      self.update_action(4)#6:death
     elif self.hit == True:
-      # --- MODIFICAÇÃO: Ativa o cronômetro assim que o hit inicia ---
-      if self.action != 5:  # Garante que só ativa uma vez por golpe recebido
+      #ativa o cronômetro assim que o hit inicia
+      if self.action != 5:  #garante que só ativa uma vez por golpe recebido
         self.flash_timer = pygame.time.get_ticks()
         self.is_flashing = True
-      self.hit = False #5:hit
+      self.hit = False 
     #dash animacao
     elif self.dashing:
-      self.update_action(0)
+      self.update_action(3)
       self.frame_index = 0
 
     elif self.attacking == True:
       if self.attack_type == 1:
-        self.update_action(3)#3:attack1
+        self.update_action(5)#3:attack1
 
       elif self.attack_type == 2:
-        self.update_action(4)#4:attack2
+        self.update_action(5)#4:attack2
       elif self.attack_type == 3:
         self.update_action(9) #special attack
         
@@ -276,10 +276,6 @@ class Fighter():
     elif self.running == True and self.jump == False:
       self.update_action(1)#1:run
 
-    elif self.defending == True:
-      self.update_action(8) # defesa
-    elif self.defense_broken:
-      self.update_action(5)
     else:
       self.update_action(0)#0:idle
     animation_cooldown = 70
