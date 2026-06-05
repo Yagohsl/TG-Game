@@ -107,7 +107,7 @@ class Fighter():
       if self.player == 1:
         #movement
         #golpe especial
-        #if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
+        #if key[pygame.K_i] and self.special_energy >= self.special_cost:
             #self.special_attack(target)
         #dash
         if key[pygame.K_k] and not self.dashing and not self.attacking and not self.hit:
@@ -128,6 +128,12 @@ class Fighter():
                 self.vel_y = 0 # Cancela a gravidade durante o dash
             else:
                 self.dashing = False
+                if key[pygame.K_a] or key[pygame.K_LEFT]:
+                    self.running = True
+                    self.flip = True
+                elif key[pygame.K_d] or key[pygame.K_RIGHT]:
+                    self.running = True
+                    self.flip = False
         else:
           if (key[pygame.K_a] or key[pygame.K_LEFT]):
             dx = -speed
@@ -243,9 +249,7 @@ class Fighter():
           self.attack_cooldown = 20
 
 
-    if self.action == 5:
-      self.defense_broken = False  #limpa estado de defesa quebrada
-      
+    
     #regeneração lenta da barra de especial
     if self.special_energy < self.max_special_energy:
         self.special_energy += 0.05
