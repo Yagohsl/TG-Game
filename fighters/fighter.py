@@ -20,8 +20,11 @@ class Fighter():
     self.attacking = False
     self.attack_type = 0
     self.attack_cooldown = 0
-    self.attack_sound = pygame.mixer.Sound("assets/audio/sword.mp3")
+    self.attack_sound = pygame.mixer.Sound("assets/audio/sword.wav")
+    self.move_sound =  pygame.mixer.Sound("assets/audio/dash.wav")
     self.attack_sound.set_volume(2.0)
+    self.move_sound.set_volume(0.5)
+
     self.hit = False
     self.health = 100
     self.alive = True
@@ -117,6 +120,8 @@ class Fighter():
         if key[pygame.K_l] and not self.dashing and not self.attacking and not self.hit:
           if now - self.last_dash_time >= self.dash_cooldown:
             self.dashing = True
+            self.move_sound.play()
+
             self.dash_timer = now
             self.last_dash_time = now
             # Define a direção do dash com base para onde o personagem está olhando
@@ -143,6 +148,8 @@ class Fighter():
           if key[pygame.K_SPACE] and not self.jump and not self.defending :
               self.vel_y = -30
               self.jump = True
+              self.move_sound.play()
+
 
           if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
             self.vel_y *= 0.5
