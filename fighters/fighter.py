@@ -147,13 +147,9 @@ class Fighter():
           if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
             self.vel_y *= 0.5
         #attack
-        if (key[pygame.K_j] or key[pygame.K_k]) and not self.defending and not self.dashing:
+        if key[pygame.K_k] and not self.defending and not self.dashing:
           self.attack(target)
-          #determine which attack type was used
-          if key[pygame.K_j]:
-            self.attack_type = 1
-          if key[pygame.K_k]:
-            self.attack_type = 2
+          self.attack_type = 2
 
 
       if self.defense_key_held and not self.defense_broken:
