@@ -1,14 +1,10 @@
 import pygame, os
 
-# Defina o diretório base do jogo
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Pega o diretório do script atual
-ASSETS_DIR = os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters')  # Caminho para as imagens
+#diretório base do jogo
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
+ASSETS_DIR = os.path.join(BASE_DIR, '..', 'assets', 'images', 'jogo', 'fighters') 
 
-# Dados dos personagens
 AVAILABLE_CHARACTERS = {
-
-    #Placeholder Personagem Principal
-
     "Hero": {
         "name": "Herói",
         "animation_steps": [1, 5, 2, 1, 4, 4, 1, 1, 1, 1],

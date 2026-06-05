@@ -1,8 +1,7 @@
-#Cores
 WHITE = (255, 255, 255)
 BLUE = (45, 171, 241)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
-COR_TEXTO = (245, 245, 245)    #Branco Giz 
+COR_TEXTO = (245, 245, 245)    
 COR_HOVER = (162, 155, 254)
