@@ -111,8 +111,8 @@ class Fighter():
       if self.player == 1:
         #movement
         #golpe especial
-        if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
-            self.special_attack(target)
+        #if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
+            #self.special_attack(target)
         #dash
         if key[pygame.K_l] and not self.dashing and not self.attacking and not self.hit:
           if now - self.last_dash_time >= self.dash_cooldown:
@@ -254,8 +254,6 @@ class Fighter():
     #dash animacao
     elif self.dashing:
       self.update_action(3)
-      self.frame_index = 0
-
     elif self.attacking == True:
       if self.attack_type == 1:
         self.update_action(5)#3:attack1
@@ -362,18 +360,18 @@ class Fighter():
 
   def draw(self, surface):
     img = pygame.transform.flip(self.image, self.flip, False)
-    # --- MODIFICAÇÃO: Aplica o efeito de piscar branco se estiver no tempo correto ---
+    #aplica o efeito de piscar branco se estiver no tempo certo
     agora = pygame.time.get_ticks()
     if self.is_flashing and agora - self.flash_timer < self.flash_duration:
       img_branca = img.copy()
       surface_branca = pygame.Surface(img_branca.get_size())
       surface_branca.fill((255, 255, 255))
-      # BLEND_RGB_ADD soma branco puro (255,255,255) mantendo a transparência do canal Alpha intacta!
+      #soma branco puro (255,255,255) mantendo a transparência do canal Alpha intacta
       img_branca.blit(surface_branca, (2, 2), special_flags=pygame.BLEND_RGB_ADD)
       img = img_branca
     else:
-      self.is_flashing = False # Desativa quando estoura o tempo
+      self.is_flashing = False #desativa quando estoura o tempo
       
-    # Desenha o personagem na tela
+    #desenha o personagem na tela
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
     #pygame.draw.rect(surface, (255, 0, 0), self.rect, 2) #Mostra hitbox

@@ -11,8 +11,8 @@ class MenuScreen:
         self.menu_font = get_font(30)
         background = pygame.image.load("assets/images/menu/FUNDO MENU.png")
         self.background = pygame.transform.smoothscale(background, (1280,720))
-        pygame.mixer.music.load("assets/audio/musicmenu.mp3")
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.load("assets/audio/musicmenu.mp3")
+        #pygame.mixer.music.play(-1)
 
 
         self.play_button = Button(

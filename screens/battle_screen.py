@@ -17,8 +17,8 @@ class BattleScreen:
         self.score = [0, 0]
         self.round_over = False
         self.round_over_cooldown = 2000
-        pygame.mixer.music.load("assets/audio/music.mp3")
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.load("assets/audio/music.mp3")
+        #pygame.mixer.music.play(-1)
         
         self.paused = False
         self.pause_screen = PauseScreen()
@@ -57,7 +57,7 @@ class BattleScreen:
             draw_health_bar(self.fighter2.health, 240, 680, 2)
 
             #status dos jogadores
-            draw_power_bar(self.fighter1.special_energy, 40, 120, 1)
+            #draw_power_bar(self.fighter1.special_energy, 40, 120, 1)
             #draw_power_bar(self.fighter2.special_energy, 680, 120, 2)
 
             #inserindo nomes
