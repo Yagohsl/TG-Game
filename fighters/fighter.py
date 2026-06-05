@@ -28,13 +28,6 @@ class Fighter():
     self.hit = False
     self.health = 100
     self.alive = True
-    self.defending = False
-    self.defense_key_held = False
-    self.defense_start_time = 0
-    self.min_defense_duration = 300
-    self.defense_break_threshold = 3  #número de hits antes de quebrar defesa
-    self.defense_hits_taken = 0  #contador de hits enquanto defende
-    self.defense_broken = False  #estado de defesa quebrada
     self.special_energy = 100
     self.max_special_energy = 100
     self.special_cost = 30
@@ -117,7 +110,7 @@ class Fighter():
         #if key[pygame.K_i] and self.special_energy >= self.special_cost and not self.defending:
             #self.special_attack(target)
         #dash
-        if key[pygame.K_l] and not self.dashing and not self.attacking and not self.hit:
+        if key[pygame.K_k] and not self.dashing and not self.attacking and not self.hit:
           if now - self.last_dash_time >= self.dash_cooldown:
             self.dashing = True
             self.move_sound.play()
@@ -136,16 +129,16 @@ class Fighter():
             else:
                 self.dashing = False
         else:
-          if (key[pygame.K_a] or key[pygame.K_LEFT])  and not self.defending:
+          if (key[pygame.K_a] or key[pygame.K_LEFT]):
             dx = -speed
             self.running = True
             self.flip = True
-          if (key[pygame.K_d] or key[pygame.K_RIGHT]) and not self.defending:
+          if (key[pygame.K_d] or key[pygame.K_RIGHT]):
             dx = speed
             self.running = True
             self.flip = False
           #jump
-          if key[pygame.K_SPACE] and not self.jump and not self.defending :
+          if key[pygame.K_SPACE] and not self.jump:
               self.vel_y = -30
               self.jump = True
               self.move_sound.play()
@@ -154,66 +147,11 @@ class Fighter():
           if self.jump and self.vel_y < 0 and not key[pygame.K_SPACE]:
             self.vel_y *= 0.5
         #attack
-        if key[pygame.K_k] and not self.defending and not self.dashing:
+        if key[pygame.K_j] and self.attack_cooldown == 0:
           self.attack(target)
           self.attack_type = 2
 
 
-      if self.defense_key_held and not self.defense_broken:
-        if not self.defending:
-          self.defending = True
-          self.defense_start_time = pygame.time.get_ticks()
-      else:
-        if self.defending:
-          time_defending = pygame.time.get_ticks() - self.defense_start_time
-          if time_defending >= self.min_defense_duration:
-            self.defending = False
-            self.defense_hits_taken = 0  # reset contador
-            self.defense_broken = False
-
-      if self.defense_key_held and not self.defense_broken:
-        if not self.defending:
-          self.defending = True
-          self.defense_start_time = pygame.time.get_ticks()
-      else:
-        if self.defending:
-          time_defending = pygame.time.get_ticks() - self.defense_start_time
-          if time_defending >= self.min_defense_duration:
-            self.defending = False
-            self.defense_hits_taken = 0  # reset contador
-            self.defense_broken = False
-
-
-      #check player 2 controls
-      if self.player == 2:
-        #movement
-        # Player 2 - golpe especial
-        if key[pygame.K_KP0] and self.special_energy >= self.special_cost and not self.defending:
-            self.special_attack(target)
-
-        if key[pygame.K_LEFT] and not self.defending:
-          dx = -speed
-          self.running = True
-        if key[pygame.K_RIGHT] and not self.defending:
-          dx = speed
-          self.running = True
-        #jump
-        if key[pygame.K_UP] and self.jump == False and not self.defending:
-          if self.running == True:
-            self.vel_y = -30
-          else: 
-            self.vel_y = -30
-          self.jump = True
-
-        #attack
-        # Aceita o número '9' e '0' da linha superior e '1' e '2' do teclado numérico
-        if (key[pygame.K_9] or key[pygame.K_KP1]) and not self.defending:
-          self.attack(target)
-          self.attack_type = 1
-        
-        elif (key[pygame.K_0] or key[pygame.K_KP2]) and not self.defending:
-          self.attack(target)
-          self.attack_type = 2    
     if not self.dashing:
       #apply gravity
       self.vel_y += gravity
@@ -230,8 +168,6 @@ class Fighter():
       self.vel_y = 0
       self.jump = False
       dy = screen_height - 90 - self.rect.bottom
-
-    
 
     #apply attack cooldown
     if self.attack_cooldown > 0:
@@ -254,18 +190,19 @@ class Fighter():
         self.flash_timer = pygame.time.get_ticks()
         self.is_flashing = True
       self.hit = False 
-    #dash animacao
-    elif self.dashing:
-      self.update_action(3)
+
     elif self.attacking == True:
       if self.attack_type == 1:
         self.update_action(5)#3:attack1
-
       elif self.attack_type == 2:
         self.update_action(5)#4:attack2
       elif self.attack_type == 3:
         self.update_action(9) #special attack
-        
+
+    #dash animacao
+    elif self.dashing:
+      self.update_action(3)
+
     elif self.jump == True:
       if self.vel_y <0:
         self.update_action(2)#2:jump
@@ -298,21 +235,13 @@ class Fighter():
       #if the player is dead then end the animation
       if self.alive == False:
         self.frame_index = len(self.animation_list[self.action]) - 1
-        #certifica de travar no ultimo sprite na animação de defesa
-      elif self.action == 8 and self.defending:
-        self.frame_index = len(self.animation_list[self.action]) - 1
       else:
         self.frame_index = 0
         #check if an attack was executed
-        if self.action == 3 or self.action == 4 or self.action == 9:
+        if self.action == 5 or self.action == 9:
           self.attacking = False
           self.attack_cooldown = 20
-        #check if damage was taken
-        if self.action == 5:
-          self.hit = False
-          #if the player was in the middle of an attack, then the attack is stopped
-          self.attacking = False
-          self.attack_cooldown = 20
+
 
     if self.action == 5:
       self.defense_broken = False  #limpa estado de defesa quebrada
@@ -333,6 +262,9 @@ class Fighter():
 
   def attack(self, target):
     if not self.attacking and self.attack_cooldown == 0:
+
+      if self.dashing:
+        self.dashing = False
       #execute attack
       self.attacking = True
       self.attack_sound.play()
@@ -340,15 +272,6 @@ class Fighter():
       if attacking_rect.colliderect(target.rect):
         if target.dashing:
           pass
-        elif target.defending:
-          target.defense_hits_taken += 1
-          if target.defense_hits_taken >= target.defense_break_threshold:
-            target.defending = False
-            target.defense_broken = True
-            target.hit = True
-            target.health -= 10  #dano cheio após quebra
-          else:
-            target.health -= 1  #dano reduzido
         else:
           target.health -= 10
           target.hit = True

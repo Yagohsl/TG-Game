@@ -28,10 +28,10 @@ def credit_screen():
         draw_text("Espaço", get_font(25), COR_TEXTO, 420, 390)
 
         draw_text("Ataque:", get_font(25), COR_TEXTO, 700, 340)
-        draw_text("K", get_font(25), COR_TEXTO, 1020, 340)
+        draw_text("J", get_font(25), COR_TEXTO, 1020, 340)
 
         draw_text("Esquiva:", get_font(25), COR_TEXTO, 700, 390)
-        draw_text("L", get_font(25), COR_TEXTO, 1020, 390)
+        draw_text("K", get_font(25), COR_TEXTO, 1020, 390)
 
 
 
