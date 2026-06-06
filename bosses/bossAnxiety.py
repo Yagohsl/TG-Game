@@ -43,6 +43,7 @@ class BossAnxiety(Boss):
             "death": 4
 }
         self.explosion_prep_timer = 0
+        self.health = 150
     
     def fire_preoccupation(self, target):
         """Calcula a rota até o jogador e aplica desvios imprevisíveis (angulares e de velocidade)."""

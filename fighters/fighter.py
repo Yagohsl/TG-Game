@@ -47,6 +47,8 @@ class Fighter():
     self.flash_timer = 0
     self.flash_duration = 150  # Tempo que ele fica branco (150 milissegundos)
     self.is_flashing = False
+    #hitbox ataque
+    #self.attacking_rect = pygame.Rect(0, 0, 0, 0) 
 
     #hitbox do jogador
     if self.player == 1:
@@ -82,7 +84,11 @@ class Fighter():
     return animation_list
 
   def reset(self):
-    self.health = 100
+    if self.player == 1:
+      self.health = 100
+    else: 
+      self.health = 150
+
     self.alive = True
     self.rect.x = self.start_x
     self.hit = False
@@ -305,3 +311,4 @@ class Fighter():
     #desenha o personagem na tela
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
     #pygame.draw.rect(surface, (255, 0, 0), self.rect, 2) #Mostra hitbox
+    #pygame.draw.rect(surface, (255,0,0),self.attacking_rect, 2) #mostra hitbox ataque

@@ -11,20 +11,21 @@ VICTORY_IMAGE = pygame.image.load("assets/images/jogo/icons/victory.png").conver
 
 
 def draw_health_bar(health, x, y, player):
-    ratio = health / 100
+    ratio_player = health / 100
+    ratio_boss = health / 150
 
     if player == 1:
         #Barra de vida invertida (direita para esquerda)
         pygame.draw.rect(SCREEN, WHITE, (x - 4, y - 4, 408, 38))  #Borda
         pygame.draw.rect(SCREEN, RED, (x, y, 400, 30))            #Fundo vermelho
-        width = 400 * ratio
+        width = 400 * ratio_player
         pygame.draw.rect(SCREEN, YELLOW, (x + 400 - width, y, width, 30))
     else:
         pygame.draw.rect(SCREEN, WHITE, (x - 4, y - 4, 808, 28))  
         pygame.draw.rect(SCREEN, RED, (x, y, 800, 20))            
         
         # Barra de vida normal (esquerda para direita)
-        pygame.draw.rect(SCREEN, YELLOW, (x, y, 800 * ratio, 20))
+        pygame.draw.rect(SCREEN, YELLOW, (x, y, 800 * ratio_boss, 20))
 
 def draw_power_bar(power, x, y, player):
     ratio = power / 100

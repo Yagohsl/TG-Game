@@ -14,7 +14,6 @@ class BattleScreen:
         self.background = pygame.image.load("assets/images/jogo/maps/background6.png") #escolhendo mapa
         self.intro_count = 3
         self.last_count_update = pygame.time.get_ticks()
-        self.score = [0, 0]
         self.round_over = False
         self.round_over_cooldown = 2000
         #pygame.mixer.music.load("assets/audio/music.mp3")
@@ -29,12 +28,26 @@ class BattleScreen:
 
         self.player_icon = game_state["player1"].icon
         self.boss_icon = game_state["player2"].icon
+        # Controle para não disparar o diálogo de fim de jogo repetidamente em loops
+        self.end_dialogue_triggered = False
 
         # Configurar a lista de falas da introdução da batalha
         self.dialogos_da_luta = [
             (self.player_icon, "Eu consigo fazer isso... Só preciso manter o foco e respirar fundo."),
             (self.boss_icon, "E se tudo der errado? Você não se preparou o suficiente. Desista!"),
             (self.player_icon, "Não vou me render aos pensamentos intrusivos. Vamos resolver isso agora!")
+        ]
+        self.dialogos_vitoria = [
+            (self.player_icon, "Consegui silenciar a crise... O bombardeio de preocupações diminuiu."),
+            (self.boss_icon, "Você venceu desta vez... mas eu sempre posso voltar se você se sobrecarregar."),
+            (self.player_icon, "Eu sei. A ansiedade faz parte da vida, mas agora eu tenho ferramentas para não deixar você me paralisar.")
+        ]
+
+        # 3. Configurar diálogos psicoeducativos de Derrota (Conscientização)
+        self.dialogos_derrota = [
+            (self.boss_icon, "Eu avisei. O medo e a exaustão assumiram o controle total."),
+            (self.player_icon, "Está tudo tão confuso... Eu não consigo pensar direito."),
+            (self.player_icon, "Dar um passo para trás não é o fim. Reconhecer que precisa de ajuda ou de um descanso também é parte do processo de cura. Respire e tente novamente.")
         ]
         self.dialogue_box.start_dialogue(self.dialogos_da_luta)
         
@@ -95,31 +108,30 @@ class BattleScreen:
                 #verificando derrota
                 if self.round_over == False:
                     if self.fighter1.alive == False:
-                        self.score[1] += 1
                         self.round_over = True
                         self.round_over_time = pygame.time.get_ticks()
                     elif self.fighter2.alive == False:
-                        self.score[0] += 1
                         self.round_over = True
                         self.round_over_time = pygame.time.get_ticks()
                 else:
-                    #exibir vitoria
-                    SCREEN.blit(VICTORY_IMAGE, ((SCREEN_WIDTH - VICTORY_IMAGE.get_width())//2, 150))
+                    if not self.end_dialogue_triggered:
+                        if self.fighter2.alive == False:  # Vitória do Jogador
+                            self.dialogue_box.start_dialogue(self.dialogos_vitoria)
+                        else:  # Derrota do Jogador
+                            self.dialogue_box.start_dialogue(self.dialogos_derrota)
+                        self.end_dialogue_triggered = True
 
-                    #acaba jogo
-                    if self.score[0] == 1:
-                        if pygame.time.get_ticks() - self.round_over_time > self.round_over_cooldown:
-                            self.round_over = True
-                            self.round_over_time = pygame.time.get_ticks()
-                            #exibir vitoria
-                            SCREEN.blit(VICTORY_IMAGE, ((SCREEN_WIDTH - VICTORY_IMAGE.get_width())//2, 150))  
+                        # Se a caixa de diálogo final terminou e o tempo de cooldown passou, encerra a cena
+                    if not self.dialogue_box.active:
+                        if self.fighter2.alive == False:
                             return
 
-                    if pygame.time.get_ticks() - self.round_over_time > self.round_over_cooldown:
-                        self.round_over = False
-                        self.intro_count = 3
-                        self.fighter1.reset()
-                        self.fighter2.reset()
+                        if pygame.time.get_ticks() - self.round_over_time > self.round_over_cooldown:
+                            self.round_over = False
+                            self.end_dialogue_triggered = False
+                            self.intro_count = 3
+                            self.fighter1.reset()
+                            self.fighter2.reset()
 
             if self.paused:
                 self.pause_screen.draw()
