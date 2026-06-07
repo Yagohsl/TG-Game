@@ -91,7 +91,17 @@ class Fighter():
 
     self.alive = True
     self.rect.x = self.start_x
+    self.rect.y = 720 - 110 - self.rect.height
     self.hit = False
+    self.action = 0         
+    self.frame_index = 0    
+    self.vel_y = 0          
+    self.jump = False       
+    self.attacking = False  
+    self.dashing = False    
+    self.update_time = pygame.time.get_ticks()
+
+    
 
   def move(self, screen_width, screen_height, surface, target, round_over):
     speed = 10

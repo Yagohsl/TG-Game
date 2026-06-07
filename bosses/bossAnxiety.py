@@ -45,6 +45,16 @@ class BossAnxiety(Boss):
         self.explosion_prep_timer = 0
         self.health = 150
     
+    def reset(self):
+        super().reset()
+        
+        self.current_action = "idle"  
+        
+        if hasattr(self, 'action_start_time'):
+            self.action_start_time = pygame.time.get_ticks()
+        if hasattr(self, 'projectiles'):
+            self.projectiles.clear()
+
     def fire_preoccupation(self, target):
         """Calcula a rota até o jogador e aplica desvios imprevisíveis (angulares e de velocidade)."""
         start_x = self.rect.centerx
