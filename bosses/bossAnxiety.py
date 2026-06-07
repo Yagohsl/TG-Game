@@ -7,10 +7,10 @@ class BossAnxiety(Boss):
     def __init__(self, name, animation_steps, sprite_sheet, icon, data, player, x, y, flip):
         super().__init__(name, animation_steps, sprite_sheet, icon, data, player, x, y, flip)
        
-        # Controle exclusivo do Bombardeio de Preocupações
+   
         self.projectiles = []
         self.projectile_cooldown = 0
-        self.shoot_interval = 200  # Corrigido para 200 milissegundos para criar um bombardeio real
+        self.shoot_interval = 200 
         self.animation_cooldown = 120
 
         #checa se projetil foi lançado
@@ -27,9 +27,9 @@ class BossAnxiety(Boss):
         self.teleport_timer = 0
         self.teleport_stage = "idle"  # "idle", "warning", "stay"
         self.teleport_target_pos = (0, 0)
-        self.teleport_warning_duration = 700  # Tempo em ms que a faísca avisa antes dele surgir
-        self.teleport_stay_duration = 300     # Tempo em ms que ele fica parado antes do próximo salto
-        self.min_teleport_distance = 250      # Distância mínima em pixels para não repetir o lugar próximo
+        self.teleport_warning_duration = 700  
+        self.teleport_stay_duration = 300     
+        self.min_teleport_distance = 250      
 
         self.animation_map = {
             "idle": 0,
@@ -64,10 +64,10 @@ class BossAnxiety(Boss):
         dy = target.rect.centery - start_y
         base_angle = math.atan2(dy, dx)
         
-        # Trajetória irregular com desvio aleatório
+        #trajetória irregular com desvio aleatório
         irregular_angle = base_angle + random.uniform(-0.2, 0.2)
         
-        # Velocidades variadas simulando pensamentos acelerados
+        #velocidades variadas
         speed = 18
         
         projectile = {
@@ -101,7 +101,7 @@ class BossAnxiety(Boss):
                 "radius": random.randint(12, 15),
                 "spawn_time": pygame.time.get_ticks(),
                 "wave_speed": random.uniform(10, 18),
-                "wave_amplitude": random.uniform(2, 4)  # Mantém o efeito ondulatório caótico da ansiedade
+                "wave_amplitude": random.uniform(2, 4)  #mantém o efeito ondulatório 
                 }
             self.projectiles.append(projectile)
 
@@ -143,26 +143,26 @@ class BossAnxiety(Boss):
                 self.projectiles.remove(proj)
 
     def draw_projectiles(self, surface):
-        """Desenha graficamente as esferas de pensamentos intrusivos na arena."""
+        """Desenha graficamente as esferas na arena."""
         for proj in self.projectiles:
             # Aura externa laranja
             pygame.draw.circle(surface, (255, 114, 13), (int(proj["x"]), int(proj["y"])), proj["radius"] + 2)
             # Aura interna preta
             pygame.draw.circle(surface, (0, 0, 0), (int(proj["x"]), int(proj["y"])), int(proj["radius"] / 2))
 
-        # Efeito visual de aviso (Faísca/Fumaça) no local de destino do teletransporte
+        # Efeito visual de aviso no local de destino do teletransporte
         if self.current_action == "teleport" and self.teleport_stage == "warning":
             center_x = self.teleport_target_pos[0] + self.rect.width // 2
             center_y = self.teleport_target_pos[1] + self.rect.height // 2
             
-            # Gera 6 círculos caóticos gerando um efeito caótico de estática/fumaça da Ansiedade
+            # Gera 6 círculos
             for _ in range(6):
                 offset_x = random.randint(-25, 25)
                 offset_y = random.randint(-40, 40)
                 radius = random.randint(6, 14)
-                # Faísca externa laranja vibrante
+                # Faísca externa laranja 
                 pygame.draw.circle(surface, (255, 114, 13), (center_x + offset_x, center_y + offset_y), radius)
-                # Centro vazio preto simulando o "vazio" do glitch
+                # Centro preto
                 pygame.draw.circle(surface, (0, 0, 0), (center_x + offset_x, center_y + offset_y), radius // 2)
 
     def update_ai(self, target, round_over):
@@ -176,7 +176,7 @@ class BossAnxiety(Boss):
         if not self.attacking and self.alive and not round_over:
             distancia_x = target.rect.centerx - self.rect.centerx
 
-            # Dano por contato direto por aproximação excessiva
+            # Dano por contato direto 
             if self.rect.colliderect(target.rect) and self.attack_cooldown == 0 and self.current_action != "dash":
                 target.hit = True
                 if hasattr(target, 'dashing') and target.dashing:
@@ -200,7 +200,7 @@ class BossAnxiety(Boss):
                     self.current_action = random.choice(["run","dash_prep","thoughts", "thought_explosion_prep", "teleport", "run"])
                  
 
-            # --- EXECUÇÃO DOS ESTADOS EXCLUSIVOS DA ANSIEDADE ---
+            # --- EXECUÇÃO DOS ESTADOS EXCLUSIVOS DO BOSS ---
             if self.current_action == "run":
                 self.running = True
                 dx = self.speed if distancia_x > 0 else -self.speed
@@ -211,11 +211,11 @@ class BossAnxiety(Boss):
                     self.fire_preoccupation(target)
                     self.fired_this_cycle = True
 
-            # === ETAPA 1: PREPARO DA EXPLOSÃO (FRAME 0) ===
+            # === PREPARO DA EXPLOSÃO ===
             elif self.current_action == "thought_explosion_prep":
                 self.running = False
                 
-                # Inicializa um temporizador para o preparo se ele não existir (crie self.explosion_prep_timer no __init__ se necessário)
+                # Inicializa um temporizador
                 if not hasattr(self, 'explosion_prep_timer') or self.explosion_prep_timer == 0:
                     self.explosion_prep_timer = current_time
 
@@ -224,30 +224,30 @@ class BossAnxiety(Boss):
                     self.explosion_prep_timer = current_time # Reaproveita o timer para a pose do disparo
                     self.current_action = "thought_explosion" # Transiciona para o ataque real
 
-            # === ETAPA 2: REALIZAÇÃO DA EXPLOSÃO (FRAME 1) ===
+            # === REALIZAÇÃO DA EXPLOSÃO ===
             elif self.current_action == "thought_explosion":
                 self.running = False
                 if not self.fired_this_cycle:
                     self.fire_explosion() # Dispara os projéteis 360
                     self.fired_this_cycle = True
 
-                # Mantém o Boss travado na pose de disparo por mais 400ms antes de voltar ao "idle"
+                # Mantém o Boss travado na pose de disparo por mais 400ms antes de voltar ao idle
                 if current_time - self.explosion_prep_timer >= 400:
                     self.explosion_prep_timer = 0 # Reseta o timer
                     self.current_action = "idle" # Libera o Boss
 
-
+            # === TELEPORTE ===
             elif self.current_action == "teleport":
                 self.running = False
                 self.gravity = 0
                 
-                # Passo 1: Inicializa o ciclo completo do ataque
+                # Inicializa o ciclo completo do ataque
                 if self.teleport_stage == "idle":
                     self.teleport_count = 0
                     self.teleport_stage = "warning"
                     self.teleport_timer = current_time
                     
-                    # Define o primeiro ponto aleatório respeitando as margens e a altura do chão (720 - 110)
+                    # Define o primeiro ponto aleatório 
                     rand_x = random.randint(100, 1180)
                     while abs(rand_x - self.rect.x) < self.min_teleport_distance:
                         rand_x = random.randint(100, 1180)
@@ -256,28 +256,28 @@ class BossAnxiety(Boss):
 
                     self.teleport_target_pos = (rand_x, rand_y)
 
-                # Passo 2: O aviso visual está ativo na tela
+                # aviso visual na tela
                 elif self.teleport_stage == "warning":
                     if current_time - self.teleport_timer >= self.teleport_warning_duration:
-                        # Estourou os 500ms de aviso: muda o Boss para a posição imediatamente!
+                        # Estourou os 500ms de aviso muda o Boss para a posição 
                         self.rect.x = self.teleport_target_pos[0]
                         self.rect.y = self.teleport_target_pos[1]
                         self.teleport_count += 1
 
-                        # Checa se já realizou os 3 teletransportes
+                        # Checa se ja realizou os 3 teletransportes
                         if self.teleport_count >= 3:
                             self.teleport_stage = "idle"
                             self.current_action = "idle"
                             self.gravity = 2
                         else:
-                            # Entra em janela curta de permanência antes do próximo sumiço
+                            # Entra em janela curta de permanencia antes do próximo sumiço
                             self.teleport_stage = "stay"
                             self.teleport_timer = current_time
 
-                # Passo 3: Boss pousou e aguarda um instante antes de saltar novamente
+                # Boss pousou e aguarda um instante antes de saltar novamente
                 elif self.teleport_stage == "stay":
                     if current_time - self.teleport_timer >= self.teleport_stay_duration:
-                        # Sorteia um novo lugar e volta para o modo de aviso de fumaça
+                        # Sorteia um novo lugar e volta para o modo de aviso 
                         self.teleport_stage = "warning"
                         self.teleport_timer = current_time
 
@@ -288,15 +288,16 @@ class BossAnxiety(Boss):
                         rand_y = random.randint(720 - 110 - self.rect.height- 150, 720 - 110 - self.rect.height)
                         self.teleport_target_pos = (rand_x, rand_y)
 
+            # === DASH ===
             elif self.current_action == "dash_prep":
-                self.running = False  # Fica estático acumulando energia
+                self.running = False  # Fica estático
                 
                 if self.dash_prep_timer == 0:
                     self.dash_prep_timer = current_time  # Marca o início do preparo
 
-                # Se passou 500ms, transiciona para o ataque real
+                # Se passou 500ms transiciona para o ataque real
                 if current_time - self.dash_prep_timer >= 500:
-                    self.dash_prep_timer = 0  # Reseta o cronômetro para o próximo uso
+                    self.dash_prep_timer = 0  
                     self.current_action = "dash"
                     
                     # Inicializa os dados de movimento imediatamente no arranque
@@ -314,7 +315,7 @@ class BossAnxiety(Boss):
                 dx = passo_atual * self.dash_direction
                 self.dash_distance_left -= passo_atual  
 
-                # Detecção de dano por atropelamento
+                # Detecção de dano
                 if self.rect.colliderect(target.rect) and not self.dash_hit:
                     if hasattr(target, 'dashing') and target.dashing:
                         pass 
@@ -345,7 +346,6 @@ class BossAnxiety(Boss):
                 self.current_action = "idle"
 
         # --- APLICADOR DINÂMICO DE ANIMAÇÃO ---
-        # Se a ação atual da IA está no nosso mapa visual, nós a aplicamos!
         if self.current_action in self.animation_map and not self.attacking:
             visual_id = self.animation_map[self.current_action]
             self.update_action(visual_id)
@@ -369,14 +369,14 @@ class BossAnxiety(Boss):
         # Se estiver vivo, não estiver tomando dano e nem atacando fisicamente corpo-a-corpo
         if self.alive and not self.hit and not self.attacking:
 
-            # CONTROLADOR DO PREPARO DA EXPLOSÃO (Trava estritamente no frame 0)
+            # CONTROLADOR DO PREPARO DA EXPLOSÃO 
             if self.current_action == "thought_explosion_prep":
                 self.update_action(5) 
                 self.frame_index = 0  #frame preparo
                 self.image = self.animation_list[self.action][self.frame_index]
                 return
 
-            # CONTROLADOR DO ATAQUE REAL DA EXPLOSÃO (Trava estritamente no frame 1)
+            # CONTROLADOR DO ATAQUE REAL DA EXPLOSÃO 
             elif self.current_action == "thought_explosion":
                 self.update_action(5)
                 self.frame_index = 1  #frame realização
@@ -384,16 +384,15 @@ class BossAnxiety(Boss):
                 return
             
             if self.current_action == "thoughts":
-                self.update_action(2)  # Força e mantém o índice 2 da folha ativo
+                self.update_action(2)  
                 
-                # Avança o índice de frames manualmente respeitando o tempo
                 if pygame.time.get_ticks() - self.update_time > self.animation_cooldown:
                     self.frame_index += 1
                     self.update_time = pygame.time.get_ticks()
                 
                 if self.frame_index >= len(self.animation_list[self.action]):
                     self.frame_index = 0
-                    self.current_action = "idle"  # Força o estado a virar IDLE na hora!
+                    self.current_action = "idle"  
                     
                 self.image = self.animation_list[self.action][self.frame_index]
                 return  
@@ -408,7 +407,7 @@ class BossAnxiety(Boss):
                 self.update_action(3)
                 self.frame_index = 1
                 self.image = self.animation_list[self.action][self.frame_index]
-                return  # Ignora o super().update() para não rodar a animação sozinho
+                return  
 
             # Se já estiver executando o dash, exibe apenas o frame 1
             elif self.current_action == "dash":
@@ -417,12 +416,9 @@ class BossAnxiety(Boss):
                 self.image = self.animation_list[self.action][self.frame_index]
                 return
 
-        # Se não estiver no estado especial, executa os comportamentos padrões herdados (idle, run, hit, death)
         super().update()
 
     def move(self, screen_width, screen_height, surface, target, round_over):
-        """Atualiza a física dos projéteis e aproveita toda a física base do Boss."""
         self.update_projectiles(target)
-        # Delega gravidade, limites, inversão e movimentação final para a classe base
         super().move(screen_width, screen_height, surface, target, round_over)
         
